@@ -3,171 +3,34 @@ import 'package:flutter/material.dart';
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[800],
-      body: SafeArea(
+      backgroundColor: Colors.white, // Set background color to white
+      drawer: _buildDrawer(context), // Side menu drawer
+      body: GestureDetector(
         child: Stack(
           children: [
-            // Main Content Section
-            Column(
-              children: [
-                const SizedBox(height: 250), // Adjust this height as needed
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(44),
-                        topRight: Radius.circular(44),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 8, // Space between rows
-                        crossAxisSpacing: 4,
-                        children: [
-                          _buildDashboardItem(Icons.collections, 'Collection'),
-                          _buildDashboardItem(Icons.handshake, 'PTP'),
-                          _buildDashboardItem(Icons.report, 'Reports'),
-                          _buildDashboardItem(Icons.auto_delete_outlined, 'Unapproved'),
-                          _buildDashboardItem(Icons.location_on_outlined, 'Nearby'),
-                        ],
-                      ),
-                    ),
-                  ),
+            Positioned(
+              top: -100,
+              left: -90,
+              child: Container(
+                width: 500,
+                height: 300,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.green,
                 ),
-              ],
+              ),
             ),
-
-            // Header and Balance Info Section
-            Column(
-              children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.menu, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                      const Text(
-                        'Dashboard',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.account_circle, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Balance Information
-                Padding(
-                  padding: const EdgeInsets.only(top: 100,right: 30,left: 30),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green[100],
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    ),
-                    child: const Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    '12',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    'No. of Receipt',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    '14,2900',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Collection Amount',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    '12',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    ' Unique Customer',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildGreetingSection(context),
+                  _buildTodaysMeeting(),
+                  _buildDashboardGrid(),
+                ],
+              ),
             ),
           ],
         ),
@@ -175,30 +38,280 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDashboardItem(IconData icon, String label) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.green[100],
-            borderRadius: BorderRadius.circular(16),
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.green,
+            ),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                        'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Jonathan',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  Text(
+                    'jonathan@example.com',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
           ),
-          alignment: Alignment.center,
-          child: Icon(icon, color: Colors.green[800], size: 40),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Profile'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Set Pin'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Change Pin'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGreetingSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Builder(
+                builder: (context) => InkWell(
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  child: const Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hey, Jonathan!",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "Let's start exploring",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white54,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          InkWell(
+            onTap: () {
+              // Handle profile click
+            },
+            child: const CircleAvatar(
+              radius: 30,
+              backgroundImage: NetworkImage(
+                  'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodaysMeeting() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-        const SizedBox(height: 4), // Reduced spacing below the icon
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              color: Colors.white,
+              height: 50,
+              child: const Center(
+                child: Text(
+                  "Today's Collection",
+                  style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
+              child: Column(
+                children: [
+                  _InfoRow(label: 'No. of Receipts', value: '13'),
+                  SizedBox(height: 5),
+                  _InfoRow(label: 'Total Collection Amount', value: '₹2343'),
+                  SizedBox(height: 5),
+                  _InfoRow(label: 'Total Unique Customer', value: '13'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardGrid() {
+    return const Padding(
+      padding: EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _DashboardCard(icon: Icons.collections, label: 'Collection'),
+              _DashboardCard(icon: Icons.handshake, label: 'PTP'),
+            ],
+          ),
+          SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _DashboardCard(icon: Icons.report, label: 'Reports'),
+              _DashboardCard(icon: Icons.delete_forever_sharp, label: 'Unapproved'),
+            ],
+          ),
+          SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _DashboardCard(icon: Icons.location_on_outlined, label: 'Nearby'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.black87,
-          ),
-          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+        ),
+        Text(
+          value,
+          style: TextStyle(fontSize: 12, color: Colors.grey[700]),
         ),
       ],
+    );
+  }
+}
+
+class _DashboardCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _DashboardCard({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 110,
+      height: 110,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 5,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.green, size: 30),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
