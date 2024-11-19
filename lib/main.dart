@@ -1,4 +1,5 @@
-import 'package:finanza_collection_f/ui/dashboard/dashboard_screen.dart';
+
+import 'package:finanza_collection_f/ui/detail_screen.dart';
 import 'package:finanza_collection_f/ui/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

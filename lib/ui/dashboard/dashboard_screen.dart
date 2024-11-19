@@ -1,3 +1,7 @@
+import 'package:finanza_collection_f/ui/collection_screen.dart';
+import 'package:finanza_collection_f/ui/ptp_screen.dart';
+import 'package:finanza_collection_f/ui/report_screen.dart';
+import 'package:finanza_collection_f/ui/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +21,8 @@ class DashboardScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none, color: AppColors.textOnPrimary),
+            icon: const Icon(Icons.notifications_none,
+                color: AppColors.textOnPrimary),
             onPressed: () {
               // Add your notification handling logic here
             },
@@ -166,7 +171,7 @@ class DashboardLocationBar extends StatelessWidget {
               ),
               child: const Icon(
                 Icons.location_on_outlined,
-                color: AppColors.textColor,
+                color: Colors.white,
               ),
             ),
           ],
@@ -382,52 +387,75 @@ class DashboardCard extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          _buildActionButton(Icons.collections, 'Collection',
-              'Add a new collection receipt', AppColors.primaryColor),
-          _buildActionButton(Icons.handshake, 'Promise to Pay',
-              'Add a new Promise', AppColors.primaryColor),
+          _buildActionButton(
+              Icons.collections, 'Collection', 'Add a new collection receipt',
+              () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const CollectionScreen()),
+            );
+          }),
+          _buildActionButton(
+              Icons.handshake, 'Promise to Pay', 'Add a new Promise', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const PTPScreen()),
+            );
+          }),
           _buildActionButton(Icons.cancel_presentation_outlined, 'Unapproved',
-              'Check for unapproved collections', AppColors.primaryColor),
+              'Check for unapproved collections',
+                  () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const UnapprovedScreen()),
+                    );
+                  }),
           _buildActionButton(Icons.punch_clock, 'Attendance',
-              'Punch your daily attendance', AppColors.primaryColor),
+              'Punch your daily attendance', () {}),
           _buildActionButton(Icons.document_scanner_sharp, 'Reports',
-              'View Your Reports', AppColors.primaryColor),
+              'View Your Reports',
+                  () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const ReportScreen()),
+                    );
+                  }),
         ],
       ),
     );
   }
 
   Widget _buildActionButton(
-      IconData icon, String label, String subTitle, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: AppColors.lightGrey,
-          border: Border.all(color: Colors.grey.shade200)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                subTitle,
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.normal),
-              ),
-            ],
-          ),
-          const SizedBox(width: 4),
-          Icon(icon, color: color, size: 30),
-        ],
+      IconData icon, String label, String subTitle, VoidCallback onTap,
+      {Color color = AppColors.primaryColor}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: AppColors.lightGrey,
+            border: Border.all(color: Colors.grey.shade200)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  subTitle,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+            const SizedBox(width: 4),
+            Icon(icon, color: color, size: 30),
+          ],
+        ),
       ),
     );
   }

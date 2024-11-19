@@ -27,8 +27,17 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
+      body:
+      Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 0),
+            child: Container(
+              color: AppColors.textColor,
+              width: double.infinity,
+              height: 0.8,
+            ),
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
