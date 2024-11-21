@@ -1,7 +1,6 @@
 import 'package:finanza_collection_f/ui/profileScreen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
-
 import 'dashboard/dashboard_screen.dart';
 
 
@@ -40,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.create,color: Colors.black,),
+            icon: Icon(Icons.create,),
             label: 'Profile',
           ),
 

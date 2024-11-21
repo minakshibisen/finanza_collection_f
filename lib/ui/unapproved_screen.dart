@@ -76,7 +76,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       child: Card(
         color: Colors.white,
         elevation: 1,
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -109,28 +109,42 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     ],
                   ),
                   const SizedBox(height: 4),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(height: 8),
-
-                      Text(
-                        textAlign: TextAlign.start,
-                        widget.address,
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColors.titleColor),
-                      ),
-
                       Text(
                         textAlign: TextAlign.start,
                         widget.description,
                         style: const TextStyle(
                             fontSize: 12, color: AppColors.titleColor),
                       ),
-                      // const SizedBox(height: 8),
                     ],
                   ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+              decoration: const BoxDecoration(
+                  color: AppColors.lightGrey,
+                  // border: Border(top: BorderSide(color: AppColors.lightGrey)),
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadiusDirectional.only(
+                      bottomEnd: Radius.circular(12),
+                      bottomStart: Radius.circular(12))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // _buildActionButton(Icons.article, 'Detail', Colors.green),
+                  // Container(
+                  //   color: AppColors.textColor,
+                  //   width: .5,
+                  //   padding: EdgeInsets.symmetric(vertical: 5),
+                  // ),
+                  const Text("Added On 24 Nov 2024",style: TextStyle(fontSize: 12,color: AppColors.textColor,fontWeight: FontWeight.bold),),
+
+                  _buildActionButton(
+                      Icons.delete, 'Delete', Colors.red),
                 ],
               ),
             ),
@@ -139,5 +153,17 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       ),
     );
   }
-
+  Widget _buildActionButton(IconData icon, String label, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 15,color: Colors.red,),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
 }
+

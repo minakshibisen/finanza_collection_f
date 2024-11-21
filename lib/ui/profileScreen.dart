@@ -1,6 +1,12 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/ui/change_pin_Screen.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
+import 'change_password_screen.dart';
+import 'check_pin_screen.dart';
+import 'login_screen.dart';
+import 'notification_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -8,6 +14,56 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
+    // List of tiles with their respective details
+    final List<Map<String, dynamic>> listItems = [
+      {
+        "title": "Change Language",
+        "icon": Icons.language,
+        "onTap": () {},
+      },
+      {
+        "title": "App Theme",
+        "icon": Icons.settings,
+        "onTap": () {
+          _showThemeSelectionDialog(context);
+        },
+      },
+      {
+        "title": "Notifications",
+        "icon": Icons.notifications,
+        "onTap": () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const NotificationScreen()),
+          );
+        },
+      },
+      {
+        "title": "Change Password",
+        "icon": Icons.password_rounded,
+        "onTap": () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
+          );
+        },
+      },
+      {
+        "title": "Change Pin",
+        "icon": Icons.pin,
+        "onTap": () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const ChangePinScreen()),
+          );
+        },
+      },
+      {
+        "title": "Logout",
+        "icon": Icons.logout,
+        "onTap": () {
+          _showLogoutDialog(context);
+        },
+      },
+    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -22,195 +78,131 @@ class ProfileScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.notifications_none, color: Colors.white),
             onPressed: () {
-              // Add your notification handling logic here
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const NotificationScreen()),
+              );
             },
           ),
         ],
       ),
-      body:
-      Column(
+      body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0),
-            child: Container(
-              color: AppColors.textColor,
-              width: double.infinity,
-              height: 0.8,
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profile Layout
-                  Stack(
+          // Profile Section
+          Stack(
+            children: [
+              Container(
+                height: size.height * 0.3,
+                color: AppColors.primaryColor,
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+                child: FadeIn(
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        height: size.height * 0.3,
-                        color: AppColors.primaryColor,
-                        padding: const EdgeInsets.fromLTRB(
-                            0, 0, 0, 40),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                              AssetImage('assets/images/ic_image.png'),
-                            ),
-                            Column(
-                              children: [
-                                SizedBox(height: 10),
-                                Text(
-                                  "User Name", // Replace with user name
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.mail, color: Colors.white, size: 16),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "user@example.com",
-                                      style: TextStyle(color: Colors.white, fontSize: 13),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage:
+                        AssetImage('assets/images/ic_image.png'),
                       ),
-
-                      // Profile Card
                       Column(
                         children: [
-                          SizedBox(height: size.height * 0.26,),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
+                          SizedBox(height: 10),
+                          Text(
+                            "User Name", // Replace with user name
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                            child: Container(
-
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(10),
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.mail, color: Colors.white, size: 16),
+                              SizedBox(width: 5),
+                              Text(
+                                "user@example.com",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  _buildCardItem(
-                                    title: "0",
-                                    subtitle: "Collection Till Date",
-                                    icon: Icons.assignment,
-                                  ),
-                                  Container(
-                                    width: 0.5,
-                                    color: Colors.grey,
-                                    height: 40,
-                                  ),
-                                  _buildCardItem(
-                                    title: "0",
-                                    subtitle: "Years of Experience",
-                                    icon: Icons.calendar_today,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
                     ],
                   ),
-
-                  SizedBox(height: 10,),
-                  _buildListTile(
-                    title: "Change Language",
-                    leadingIcon: Icons.language,
-                    onTap: () {},
-                  ),
+                ),
+              ),
+              // Profile Stats Card
+              Column(
+                children: [
+                  SizedBox(height: size.height * 0.26),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Container(
-                      width: double.infinity,
-                      color: Colors.grey,
-                      height: 0.3,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      decoration: BoxDecoration(
+                        color: AppColors.lightGrey,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildCardItem(
+                            title: "0",
+                            subtitle: "Collection Till Date",
+                            icon: Icons.assignment,
+                          ),
+                          Container(
+                            width: 0.5,
+                            color: Colors.grey,
+                            height: 40,
+                          ),
+                          _buildCardItem(
+                            title: "0",
+                            subtitle: "Years of Experience",
+                            icon: Icons.calendar_today,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildListTile(
-                    title: "App Theme",
-                    leadingIcon: Icons.settings,
-                    onTap: () {},
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3, horizontal: 15),
-                    child: Container(
-                      width: double.infinity,
-                      color: Colors.grey,
-                      height: 0.3,
-                    ),
-                  ),
-                  _buildListTile(
-                    title: "Notifications",
-                    leadingIcon: Icons.notifications,
-                    onTap: () {},
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3, horizontal: 15),
-                    child: Container(
-                      width: double.infinity,
-                      color: Colors.grey,
-                      height: 0.3,
-                    ),
-                  ),
-                  _buildListTile(
-                    title: "Change Password",
-                    leadingIcon: Icons.password_rounded,
-                    onTap: () {},
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3, horizontal: 15),
-                    child: Container(
-                      width: double.infinity,
-                      color: Colors.grey,
-                      height: 0.3,
-                    ),
-                  ),
-                  _buildListTile(
-                    title: "Set Pin",
-                    leadingIcon: Icons.pin,
-                    onTap: () {},
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3, horizontal: 15),
-                    child: Container(
-                      width: double.infinity,
-                      color: Colors.grey,
-                      height: 0.3,
-                    ),
-                  ),
-                  _buildListTile(
-                    title: "Logout",
-                    leadingIcon: Icons.logout,
-                    onTap: () {
-                      // Handle logout
-                    },
                   ),
                 ],
               ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // List of settings options with staggered animation
+          Expanded(
+            child: ListView.builder(
+              itemCount: listItems.length,
+              itemBuilder: (context, index) {
+                final item = listItems[index];
+                return FadeInLeft(
+                  duration: const Duration(milliseconds: 500),
+                  delay: Duration(milliseconds: index * 200), // Staggered delay
+                  child: Column(
+                    children: [
+                      _buildListTile(
+                        title: item['title']!,
+                        leadingIcon: item['icon']!,
+                        onTap: item['onTap']!,
+                      ),
+                      if (index != listItems.length - 1)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
+                          child: Container(
+                            width: double.infinity,
+                            color: Colors.grey,
+                            height: 0.3,
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -218,9 +210,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCardItem({required String title,
-    required String subtitle,
-    required IconData icon}) {
+  Widget _buildCardItem(
+      {required String title, required String subtitle, required IconData icon}) {
     return Column(
       children: [
         Text(
@@ -233,42 +224,158 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           subtitle,
-          style: const TextStyle(fontSize: 11, color: AppColors.textColor),
+          style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.iconColor),
           textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-      child: Text(
-        title,
-        style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: AppColors.titleColor),
-      ),
-    );
-  }
-
-  Widget _buildListTile({required String title,
-    required IconData leadingIcon,
-    required VoidCallback onTap}) {
+  Widget _buildListTile(
+      {required String title,
+        required IconData leadingIcon,
+        required VoidCallback onTap}) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       leading: Icon(leadingIcon, color: AppColors.iconColor),
       title: Text(
         title,
         style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: AppColors.titleColor),
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          color: AppColors.titleColor,
+        ),
       ),
-      trailing:
-      const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textColor),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: AppColors.textColor,
+      ),
       onTap: onTap,
     );
   }
+}
+
+void _showThemeSelectionDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Choose the App Theme",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _buildThemeOption(
+              context,
+              title: "Light",
+              isSelected: false, // Replace with actual theme state
+            ),
+            _buildThemeOption(
+              context,
+              title: "Dark",
+              isSelected: false, // Replace with actual theme state
+            ),
+            _buildThemeOption(
+              context,
+              title: "System default",
+              isSelected: true, // Replace with actual theme state
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildThemeOption(BuildContext context,
+    {required String title, required bool isSelected}) {
+  return ListTile(
+    contentPadding: const EdgeInsets.symmetric(vertical: 3),
+    leading: Radio(
+      value: title,
+      groupValue: isSelected ? title : null,
+      onChanged: (value) {
+        // Handle the theme selection logic
+        Navigator.of(context).pop(); // Close dialog on selection
+      },
+      activeColor: AppColors.primaryColor, // Active theme color
+    ),
+    title: Text(
+      title,
+      style: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: Colors.black,
+      ),
+    ),
+  );
+}
+
+void _showLogoutDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Perform logout logic
+              Navigator.of(context).pop(); // Close the dialog
+              // Navigate to login screen or handle logout
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const CheckPinScreen()),
+              );
+            },
+            child: const Text('Logout'),
+          ),
+        ],
+      );
+    },
+  );
 }

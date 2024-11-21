@@ -1,6 +1,8 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection_screen.dart';
+import 'package:finanza_collection_f/ui/due_report_screen.dart';
+import 'package:finanza_collection_f/ui/notification_screen.dart';
 import 'package:finanza_collection_f/ui/ptp_screen.dart';
-import 'package:finanza_collection_f/ui/report_screen.dart';
 import 'package:finanza_collection_f/ui/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const duration = 1000;
     return Scaffold(
       backgroundColor: AppColors.textOnPrimary,
       appBar: AppBar(
@@ -24,7 +27,9 @@ class DashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.notifications_none,
                 color: AppColors.textOnPrimary),
             onPressed: () {
-              // Add your notification handling logic here
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const NotificationScreen()),
+              );
             },
           ),
         ],
@@ -34,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             dashboardGreeting(),
-            const DashboardLocationBar(),
+            FadeInLeft(duration: const Duration(milliseconds: duration),child: const DashboardLocationBar()),
             const SizedBox(height: 10),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -56,7 +61,7 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const DashboardGrid(),
+            FadeInLeft(duration: const Duration(milliseconds: duration),child: const DashboardGrid()),
             const SizedBox(height: 30),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -413,7 +418,7 @@ class DashboardCard extends StatelessWidget {
               'View Your Reports',
                   () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const ReportScreen()),
+                      MaterialPageRoute(builder: (context) => const DueReportScreen()),
                     );
                   }),
         ],

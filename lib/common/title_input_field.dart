@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+
+class TitleInputField extends StatelessWidget {
+  final String titleText;
+
+
+  const TitleInputField({
+    required this.titleText,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        titleText,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+      ),
+    );
+  }
+}

@@ -1,3 +1,6 @@
+import 'package:finanza_collection_f/ui/add_collection_screen.dart';
+import 'package:finanza_collection_f/ui/add_ptp_screen.dart';
+import 'package:finanza_collection_f/ui/ptp_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/utils/default_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -195,6 +198,16 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                       children: [
                         const SizedBox(height: 8),
 
+
+
+                        Text(
+                          textAlign: TextAlign.start,
+                          widget.address,
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.titleColor),
+                        ),
+                        // const SizedBox(height: 8),
+
                         GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -218,14 +231,6 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                                     fontWeight: FontWeight.bold),
                               ),
                             )),
-
-                        Text(
-                          textAlign: TextAlign.start,
-                          widget.address,
-                          style: const TextStyle(
-                              fontSize: 12, color: AppColors.titleColor),
-                        ),
-                        // const SizedBox(height: 8),
                       ],
                     ),
                 ],
@@ -250,20 +255,28 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
                   _buildActionButton(
-                      Icons.location_on, 'Location', Colors.orange),
+                      Icons.location_on, 'Location', Colors.orange,(){}),
                   Container(
                     color: AppColors.textColor,
                     width: .5,
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
-                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange),
+                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange,(){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const AddPtpScreen()),
+                    );
+                  }),
                   Container(
                     color: AppColors.textColor,
                     width: .5,
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   _buildActionButton(
-                      Icons.account_balance_wallet, 'Collection', Colors.green),
+                      Icons.account_balance_wallet, 'Collection', Colors.green,(){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const AddCollectionScreen()),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -273,16 +286,19 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color) {
-    return Row(
-      children: [
-        Icon(icon, size: 15),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-        ),
-      ],
+  Widget _buildActionButton(IconData icon, String label, Color color,VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(icon, size: 15),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }

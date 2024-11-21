@@ -1,7 +1,9 @@
+import 'package:finanza_collection_f/ui/add_collection_screen.dart';
 import 'package:finanza_collection_f/utils/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
+import 'add_ptp_screen.dart';
 
 class PTPScreen extends StatefulWidget {
   const PTPScreen({super.key});
@@ -169,7 +171,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               decoration: const BoxDecoration(
                   color: AppColors.lightGrey,
                   // border: Border(top: BorderSide(color: AppColors.lightGrey)),
@@ -186,14 +188,22 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange),
+                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange,(){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const AddPtpScreen()),
+                    );
+                  }),
                   Container(
                     color: AppColors.textColor,
                     width: .5,
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   _buildActionButton(
-                      Icons.account_balance_wallet, 'Collection', Colors.green),
+                      Icons.account_balance_wallet, 'Collection', Colors.green,(){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const AddCollectionScreen()),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -203,16 +213,19 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color) {
-    return Row(
-      children: [
-        Icon(icon, size: 15),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-        ),
-      ],
+  Widget _buildActionButton(IconData icon, String label, Color color,VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(icon, size: 15),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }

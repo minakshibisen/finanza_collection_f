@@ -1,6 +1,9 @@
 
+import 'package:finanza_collection_f/ui/LocationScreen.dart';
 import 'package:finanza_collection_f/ui/detail_screen.dart';
 import 'package:finanza_collection_f/ui/homeScreen.dart';
+import 'package:finanza_collection_f/ui/login_screen.dart';
+import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,10 +22,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: GoogleFonts.workSans().fontFamily,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home:   const LoginScreen(),
     );
   }
 }
