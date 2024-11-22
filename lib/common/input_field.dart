@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../utils/colors.dart';
 
@@ -11,18 +12,22 @@ class InputFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final int lines;
   final bool hasIcon;
+  final int? length;
+  final bool enabled;
+  ValueChanged<String>? onChanged;
 
-  const InputFieldWidget(
+  InputFieldWidget(
       {required this.hintText,
       this.icon = Icons.receipt,
-      Key? key,
+      super.key,
       this.textInputAction = TextInputAction.done,
       this.lines = 1,
+      this.length,
       this.keyboardType = TextInputType.text,
       this.capitalize = false,
       this.hasIcon = true,
-      required this.controller})
-      : super(key: key);
+      this.enabled = false,
+      this.onChanged, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +52,25 @@ class InputFieldWidget extends StatelessWidget {
               size: 18,
               color: AppColors.primaryColor,
             ),
-          const SizedBox(width: 5.0),
+          const SizedBox(width: 10.0),
           Expanded(
             child: TextField(
               textInputAction: textInputAction,
               textCapitalization: textCapitalization,
               keyboardType: keyboardType,
               maxLines: lines,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              readOnly: enabled,
+              maxLength: length,
               controller: controller,
+              canRequestFocus: !enabled,
+              showCursor: !enabled,
+              onChanged: onChanged,
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: hintText,
+                counterText: "",
                 hintStyle: TextStyle(fontSize: 12, color: Colors.grey[500]),
               ),
             ),

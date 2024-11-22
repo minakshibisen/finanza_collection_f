@@ -1,11 +1,13 @@
+import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class InputFieldTitle extends StatelessWidget {
   final String titleText;
-
+  final FontWeight fontWeight;
 
   const InputFieldTitle({
     required this.titleText,
+    this.fontWeight = FontWeight.w600,
     super.key,
   });
 
@@ -15,7 +17,7 @@ class InputFieldTitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         titleText,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+        style: TextStyle(fontSize: 14, fontWeight: fontWeight, color: AppColors.titleLightColor),
       ),
     );
   }

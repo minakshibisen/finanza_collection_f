@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Locationscreen extends StatefulWidget {
+class LocationScreen extends StatefulWidget {
+  const LocationScreen({super.key});
+
   @override
-  _LocationscreenState createState() => _LocationscreenState();
+  _LocationScreenState createState() => _LocationScreenState();
 }
 
-class _LocationscreenState extends State<Locationscreen> {
+class _LocationScreenState extends State<LocationScreen> {
   final TextEditingController _receiptController = TextEditingController();
 
   // For dropdown spinner
@@ -15,7 +17,7 @@ class _LocationscreenState extends State<Locationscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Input with Dropdown')),
+      appBar: AppBar(title: const Text('Input with Dropdown')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

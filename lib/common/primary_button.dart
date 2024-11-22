@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 
 class PrimaryButton extends StatelessWidget {
-  String text;
-  Color color;
-  Color textColor;
-  Color borderColor;
-  VoidCallback onPressed;
-  BuildContext context;
+  final String text;
+  final Color color;
+  final Color textColor;
+  final Color borderColor;
+  final VoidCallback onPressed;
+  final BuildContext context;
 
-  PrimaryButton({
+  const PrimaryButton({
     super.key,
     required this.borderColor,
     required this.onPressed,
