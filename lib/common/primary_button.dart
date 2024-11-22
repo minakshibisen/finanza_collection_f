@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/colors.dart';
+
 class PrimaryButton extends StatelessWidget {
   String text;
   Color color;
@@ -20,25 +22,26 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 6,
-          backgroundColor: color,
-          side: BorderSide(color: borderColor),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+   return GestureDetector(
+     onTap: onPressed,
+     child: Container(
+        height: 40,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: const LinearGradient(colors: [
+              AppColors.primaryColor,
+              Color.fromRGBO(
+                  24, 102, 169, 0.5803921568627451),
+            ])),
+        child:  Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold),
           ),
-          minimumSize: const Size(280, 65),
-        ),
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: TextStyle(
-              color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
         ),
       ),
-    );
+   );
   }
 }

@@ -1,9 +1,9 @@
 import 'package:finanza_collection_f/common/title_input_field.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../common/input_field.dart';
+import '../../common/input_field.dart';
 
 class AddCollectionScreen extends StatefulWidget {
   const AddCollectionScreen({super.key});
@@ -28,12 +28,12 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const TitleInputField(titleText: "Instrument Date"),
+            const InputFieldTitle(titleText: "Instrument Date"),
             const DatePickerField(),
             const SizedBox(
               height: 15,
             ),
-            const TitleInputField(titleText: "Inst / Receipt No."),
+            const InputFieldTitle(titleText: "Inst / Receipt No."),
             InputFieldWidget(
               hintText: "Enter Receipt No.",
               icon: Icons.receipt,
@@ -43,7 +43,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
             const SizedBox(
               height: 15,
             ),
-            const TitleInputField(titleText: "Comment / Narration"),
+            const InputFieldTitle(titleText: "Comment / Narration"),
             InputFieldWidget(
               hintText: "Enter Comment",
               icon: Icons.comment,

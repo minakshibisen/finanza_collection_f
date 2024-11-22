@@ -1,126 +1,46 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../common/input_field.dart';
-import '../common/title_input_field.dart';
-
-class AddPtpScreen extends StatefulWidget {
-  const AddPtpScreen({super.key});
+class DueReportScreen extends StatefulWidget {
+  const DueReportScreen({super.key});
 
   @override
-  State<AddPtpScreen> createState() => _AddPtpScreenState();
+  State<DueReportScreen> createState() => _DueReportScreenState();
 }
-final TextEditingController _dateController = TextEditingController();
-final TextEditingController _descriptionController = TextEditingController();
 
-class _AddPtpScreenState extends State<AddPtpScreen> {
+class _DueReportScreenState extends State<DueReportScreen> {
   List<String> items = [
     'Pramod Kumar Matho',
+    'Pramod Kumar Matho',
+    'Pramod Kumar Matho',
   ];
-  get inputController => null;
-
-
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: DefaultAppBar(title: "Promise To Pay", size: size),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const TitleInputField(titleText: "Next Visit Date"),
-            DatePickerField(),
-            const SizedBox(
-              height: 15,
+      backgroundColor: AppColors.textOnPrimary,
+      appBar: DefaultAppBar(title: "Due Reports", size: size),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return FadeInLeft(
+            delay: Duration(milliseconds: index * 180),
+            child: CollectionItemCard(
+              title: items[index],
+              lan: '101100156126',
+              description: 'Installment due no.(1) posted for date 2024-11-14',
+              onTap: () {
+                // Handle item tap if needed
+              }, date: '20 Nov 2024',
+              amount: '₹ 14,000',
+              index: index,
             ),
-            const TitleInputField(titleText: "Description"),
-            InputFieldWidget(
-              hintText: "Enter Description",
-              icon: Icons.receipt,
-              textInputAction: TextInputAction.next,
-              controller: _descriptionController,
-            ),
-            const SizedBox(height: 15,),
-            const Text(
-              "Previous Promises",
-              style: TextStyle(
-                color: AppColors.titleColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return CollectionItemCard(
-                    title: items[index],
-                    lan: '101100156126',
-                    description: 'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
-                    onTap: () {
-                      // Handle item tap if needed
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
-    );
-  }
 
-}
-
-
-class DatePickerField extends StatefulWidget {
-  const DatePickerField({super.key});
-
-  @override
-  _DatePickerFieldState createState() => _DatePickerFieldState();
-}
-
-class _DatePickerFieldState extends State<DatePickerField> {
-  final TextEditingController _dateController = TextEditingController();
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        _dateController.text = "${pickedDate.toLocal()}".split(' ')[0];
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _selectDate(context),
-      child: AbsorbPointer(
-        child:   InputFieldWidget(
-          hintText: "Select Date",
-          icon: Icons.calendar_month,
-          textInputAction: TextInputAction.next,
-          controller: _dateController,
-        ),
-      ),
     );
   }
 }
@@ -128,15 +48,21 @@ class _DatePickerFieldState extends State<DatePickerField> {
 class CollectionItemCard extends StatefulWidget {
   final String title;
   final String lan;
+  final String date;
+  final String amount;
   final String description;
   final VoidCallback onTap;
+  final int index;
 
   const CollectionItemCard({
     super.key,
     required this.title,
+    required this.date,
+    required this.amount,
     required this.lan,
     required this.description,
     required this.onTap,
+    required this.index,
   });
 
   @override
@@ -175,6 +101,17 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                           color: AppColors.titleColor,
                         ),
                       ),
+
+
+                      Text(
+                        widget.amount
+                        ,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.titleColor,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -196,10 +133,18 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                             style: const TextStyle(
                               fontSize: 13,
                               color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ],
+                      ),
+                      Text(
+                        widget.date,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.titleColor,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ],
                   ),

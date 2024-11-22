@@ -1,7 +1,7 @@
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/colors.dart';
+import '../../utils/colors.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key});
@@ -272,7 +272,7 @@ class _DetailScreenState extends State<DetailScreen> {
          const Padding(
            padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
            child: Text(
-             "List Of Co Applicants",
+             "List Of Application Members",
              style: TextStyle(
                color: AppColors.titleColor,
                fontSize: 16,
@@ -288,10 +288,11 @@ class _DetailScreenState extends State<DetailScreen> {
                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
                  child: CollectionItemCard(
                    title: items[index],
-                   Mobile: '0987654321',
+                   mobile: '0987654321',
+
                    address:
                    'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD, Pune City PUNE Kothrud S.O 411038, Test Landmark, PUNE, MAHARASHTRA - 411038',
-                   Status: 'Co-applicant',
+                   status: 'Co-applicant',
                    onTap: () {
                      // Handle item tap if needed
                    },
@@ -308,17 +309,17 @@ class _DetailScreenState extends State<DetailScreen> {
 
 class CollectionItemCard extends StatefulWidget {
   final String title;
-  final String Mobile;
+  final String mobile;
   final String address;
-  final String Status;
+  final String status;
   final VoidCallback onTap;
 
   const CollectionItemCard({
     super.key,
     required this.title,
-    required this.Mobile,
+    required this.mobile,
     required this.address,
-    required this.Status,
+    required this.status,
     required this.onTap,
   });
 
@@ -373,6 +374,33 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                       Row(
                         children: [
                           const Text(
+                            'Applicant Status: ',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.titleColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            widget.status,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
                             'Mobile: ',
                             style: TextStyle(
                               fontSize: 13,
@@ -381,10 +409,10 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                             ),
                           ),
                           Text(
-                            widget.Mobile,
+                            widget.mobile,
                             style: const TextStyle(
                               fontSize: 13,
-                              color: AppColors.primaryColor,
+                              color: AppColors.titleColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

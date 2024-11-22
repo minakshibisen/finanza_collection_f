@@ -1,8 +1,11 @@
-import 'package:finanza_collection_f/ui/add_collection_screen.dart';
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/colors.dart';
+import '../../common/input_field.dart';
+import '../../common/title_input_field.dart';
+import '../../utils/colors.dart';
 import 'add_ptp_screen.dart';
 
 class PTPScreen extends StatefulWidget {
@@ -24,53 +27,142 @@ class _PTPScreenState extends State<PTPScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Promise To Pay List", size: size),
-      body: Column(
-        children: [
-          // Stack(
-          //   alignment: Alignment.centerLeft,
-          //   children: [
-          //     Container(
-          //       width: double.infinity,
-          //       height: size.height * 0.1,
-          //       decoration: BoxDecoration(
-          //           color: AppColors.primaryColor,
-          //           shape: BoxShape.rectangle,
-          //           borderRadius:
-          //           BorderRadius.only(bottomRight: Radius.circular(200))),
-          //     ),
-          //     Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: Text(
-          //         "Today: 19 November",
-          //         style: const TextStyle(
-          //           fontSize: 15,
-          //           fontWeight: FontWeight.bold,
-          //           color: Colors.white,
-          //         ),
-          //       ),
-          //     ),
-          //
-          //   ],
-          // ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: CollectionItemCard(
-                    title: items[index],
-                    lan: '101100156126',
-                    description: 'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
-                    onTap: () {
-                      // Handle item tap if needed
-                    },
-                  ),
-                );
-              },
+      body:
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+           const Padding(
+             padding: EdgeInsets.symmetric(horizontal: 16.0,vertical: 5),
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Text(
+                   "Promises For ",
+                   style: TextStyle(
+                     color: AppColors.titleColor,
+                     fontSize: 16,
+                     fontWeight: FontWeight.bold,
+                   ),
+                 ),
+                 SizedBox(
+                   height: 15,
+                 ),
+                 DatePickerField(),
+                 SizedBox(
+                   height: 5,
+                 ),
+                 // Text(
+                 //   "List of Promises ",
+                 //   style: TextStyle(
+                 //     color: AppColors.titleColor,
+                 //     fontSize: 16,
+                 //     fontWeight: FontWeight.bold,
+                 //   ),
+                 // ),
+                 // SizedBox(
+                 //   height: 5,
+                 // ),
+               ],
+             ),
+           ),
+
+
+            // Stack(
+            //   alignment: Alignment.centerLeft,
+            //   children: [
+            //     Container(
+            //       width: double.infinity,
+            //       height: size.height * 0.1,
+            //       decoration: BoxDecoration(
+            //           color: AppColors.primaryColor,
+            //           shape: BoxShape.rectangle,
+            //           borderRadius:
+            //           BorderRadius.only(bottomRight: Radius.circular(200))),
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.all(8.0),
+            //       child: Text(
+            //         "Today: 19 November",
+            //         style: const TextStyle(
+            //           fontSize: 15,
+            //           fontWeight: FontWeight.bold,
+            //           color: Colors.white,
+            //         ),
+            //       ),
+            //     ),
+            //
+            //   ],
+            // ),
+
+            Expanded(
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return FadeInLeft(
+                    delay: Duration(milliseconds: index * 180),
+                    child: CollectionItemCard(
+                      title: items[index],
+                      lan: '101100156126',
+                      description: 'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
+                      onTap: () {
+                        // Handle item tap if needed
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DatePickerField extends StatefulWidget {
+  const DatePickerField({super.key});
+
+  @override
+  _DatePickerFieldState createState() => _DatePickerFieldState();
+}
+
+class _DatePickerFieldState extends State<DatePickerField> {
+  final TextEditingController _dateController = TextEditingController();
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _dateController.text = "${pickedDate.toLocal()}".split(' ')[0];
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _selectDate(context),
+      child: AbsorbPointer(
+        child:   InputFieldWidget(
+          hintText: "Select Date",
+          icon: Icons.calendar_month,
+          textInputAction: TextInputAction.next,
+          controller: _dateController,
+        ),
       ),
     );
   }

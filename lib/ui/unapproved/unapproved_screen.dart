@@ -1,7 +1,8 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/colors.dart';
-import '../utils/default_app_bar.dart';
+import '../../utils/colors.dart';
+import '../../common/default_app_bar.dart';
 
 class UnapprovedScreen extends StatefulWidget {
   const UnapprovedScreen({super.key});
@@ -15,33 +16,35 @@ class _UnapprovedScreenState extends State<UnapprovedScreen> {
     'Pramod Kumar Matho',
     'Bhooki Chudail',
   ];
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Unapproved", size: size),
-    body:  Expanded(
-      child: ListView.builder(
+      body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: CollectionItemCard(
-              title: items[index],
-              amount: '14,000',
-              address:
-              'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
-              description:"asdf asdf asdf asdf",
-              onTap: () {  },
+          return FadeInLeft(
+            delay: Duration(milliseconds: index * 180),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: CollectionItemCard(
+                title: items[index],
+                amount: '14,000',
+                address: 'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
+                description: "asdf asdf asdf asdf",
+                onTap: () {},
+              ),
             ),
           );
         },
       ),
-    ),
     );
   }
 }
+
 class CollectionItemCard extends StatefulWidget {
   final String title;
   final String amount;
@@ -141,10 +144,15 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                  const Text("Added On 24 Nov 2024",style: TextStyle(fontSize: 12,color: AppColors.textColor,fontWeight: FontWeight.bold),),
+                  const Text(
+                    "Added On 24 Nov 2024",
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textColor,
+                        fontWeight: FontWeight.bold),
+                  ),
 
-                  _buildActionButton(
-                      Icons.delete, 'Delete', Colors.red),
+                  _buildActionButton(Icons.delete, 'Delete', Colors.red),
                 ],
               ),
             ),
@@ -153,10 +161,15 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       ),
     );
   }
+
   Widget _buildActionButton(IconData icon, String label, Color color) {
     return Row(
       children: [
-        Icon(icon, size: 15,color: Colors.red,),
+        Icon(
+          icon,
+          size: 15,
+          color: Colors.red,
+        ),
         const SizedBox(width: 4),
         Text(
           label,
@@ -166,4 +179,3 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 }
-

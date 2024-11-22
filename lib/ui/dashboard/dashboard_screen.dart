@@ -1,11 +1,12 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:finanza_collection_f/ui/collection_screen.dart';
-import 'package:finanza_collection_f/ui/due_report_screen.dart';
-import 'package:finanza_collection_f/ui/notification_screen.dart';
-import 'package:finanza_collection_f/ui/ptp_screen.dart';
-import 'package:finanza_collection_f/ui/unapproved_screen.dart';
+import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
+import 'package:finanza_collection_f/ui/report/due_report_screen.dart';
+import 'package:finanza_collection_f/ui/misc/notification_screen.dart';
+import 'package:finanza_collection_f/ui/unapproved/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
+
+import '../ptp/ptp_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'homeScreen.dart';
-import 'login_screen.dart';
+import '../../../common/primary_button.dart';
+import '../../../utils/colors.dart';
+import '../../dashboard/homeScreen.dart';
 
-class CheckPinScreen extends StatefulWidget {
-  const CheckPinScreen({super.key});
+class SetPinScreen extends StatefulWidget {
+  const SetPinScreen({super.key});
 
   @override
-  State<CheckPinScreen> createState() => _CheckPinScreenState();
+  State<SetPinScreen> createState() => _SetPinScreenState();
 }
 
-String pin = '';
+class _SetPinScreenState extends State<SetPinScreen> {
+  String pin = '';
 
-class _CheckPinScreenState extends State<CheckPinScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -95,33 +95,22 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                 focusedPinTheme: focusedPinTheme,
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                 showCursor: true,
-                closeKeyboardWhenCompleted: false,
                 onCompleted: (value) {
                   pin = value;
-                  checkPin();
                 },
               ),
               const SizedBox(
                 height: 30,
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                  );
+              PrimaryButton(
+                color: AppColors.primaryColor,
+                borderColor: AppColors.primaryColor,
+                onPressed: () {
+                  savePin();
                 },
-                child: const Text('Register With Login ID?',
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-                    textAlign: TextAlign.center),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text('Forgot Pin?',
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-                  textAlign: TextAlign.center),
+                context: context,
+                text: 'Set Pin',
+              )
             ],
           ),
         ),
@@ -129,23 +118,26 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
     );
   }
 
-  void checkPin() async {
+  void savePin() async {
     if (pin.isEmpty || pin.length < 4) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Enter Pin!")));
     } else {
       var pref = await SharedPreferences.getInstance();
-      var existingPin = pref.getString('pin');
-      if (existingPin == pin) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomeScreen()), // Your Home Screen
-        );
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Incorrect Pin!")));
-      }
+
+      await pref.setString('pin', pin);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Pin Saved!")));
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //       builder: (context) => const HomeScreen()), // Your Home Screen
+      // );
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const HomeScreen();
+      }), (r){
+        return false;
+      });
     }
   }
 }

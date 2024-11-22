@@ -1,5 +1,6 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
 
@@ -9,10 +10,12 @@ class NotificationScreen extends StatefulWidget {
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
+
 List<String> items = [
   'Pramod Kumar Matho',
   'Minakshi Bisen',
 ];
+
 class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
@@ -21,11 +24,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return  Scaffold(
       backgroundColor: AppColors.textOnPrimary,
       appBar: DefaultAppBar(title: "Notification", size: size),
-      body:   Expanded(
-        child: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return Padding(
+      body:   ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return FadeInLeft(
+            delay: Duration(milliseconds: index * 180),
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
               child: CollectionItemCard(
                 title: items[index],
@@ -38,9 +42,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   // Handle item tap if needed
                 },
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -160,6 +164,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 }
+
 class RoundedSearchInput extends StatelessWidget {
   final TextEditingController textController;
   final String hintText;

@@ -6,6 +6,8 @@ class AppColors {
 
   static const Color lightGrey = Color(0xfff6f7f9);
 
+  static const Color unselectedColor = Color(0xffd3d3d3);
+
   static const Color titleColor = Color(0xFF000000);
   static const Color textColor = Color(0xff9e9e9e);
   static const Color textOnPrimary = Color(0xffffffff);

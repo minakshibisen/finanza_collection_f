@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../utils/colors.dart';
-import '../utils/default_app_bar.dart';
+import '../../utils/colors.dart';
+import '../../common/default_app_bar.dart';
 
 class CollectionReportScreen extends StatefulWidget {
   const CollectionReportScreen({super.key});

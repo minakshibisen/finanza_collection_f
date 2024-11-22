@@ -9,15 +9,20 @@ class InputFieldWidget extends StatelessWidget {
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final TextEditingController controller;
+  final int lines;
+  final bool hasIcon;
 
   const InputFieldWidget(
       {required this.hintText,
-        required this.icon,
-        super.key,
-        this.textInputAction = TextInputAction.done,
-        this.keyboardType = TextInputType.text,
-        this.capitalize = false,
-        required this.controller});
+      this.icon = Icons.receipt,
+      Key? key,
+      this.textInputAction = TextInputAction.done,
+      this.lines = 1,
+      this.keyboardType = TextInputType.text,
+      this.capitalize = false,
+      this.hasIcon = true,
+      required this.controller})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +41,19 @@ class InputFieldWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: AppColors.primaryColor,
-          ),
+          if (hasIcon)
+            Icon(
+              icon,
+              size: 18,
+              color: AppColors.primaryColor,
+            ),
           const SizedBox(width: 5.0),
           Expanded(
             child: TextField(
               textInputAction: textInputAction,
               textCapitalization: textCapitalization,
               keyboardType: keyboardType,
+              maxLines: lines,
               controller: controller,
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(

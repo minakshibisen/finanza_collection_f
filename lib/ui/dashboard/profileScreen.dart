@@ -1,12 +1,12 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:finanza_collection_f/ui/change_pin_Screen.dart';
+import 'package:finanza_collection_f/ui/auth/pin/change_pin_Screen.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/colors.dart';
-import 'change_password_screen.dart';
-import 'check_pin_screen.dart';
-import 'login_screen.dart';
-import 'notification_screen.dart';
+import '../../utils/colors.dart';
+import '../auth/change_password_screen.dart';
+import '../auth/pin/check_pin_screen.dart';
+import '../auth/login_screen.dart';
+import '../misc/notification_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -141,28 +141,51 @@ class ProfileScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
                         color: AppColors.lightGrey,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _buildCardItem(
-                            title: "0",
-                            subtitle: "Collection Till Date",
-                            icon: Icons.assignment,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: _buildCardItem(
+                              title: "Branch",
+                              subtitle: "Delhi - CP",
+                            ),
                           ),
-                          Container(
-                            width: 0.5,
-                            color: Colors.grey,
-                            height: 40,
+                          Padding(
+                             padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                            child: Container(
+                              height: 0.2,
+                              color: Colors.grey[400],
+                              width: double.infinity,
+                            ),
                           ),
-                          _buildCardItem(
-                            title: "0",
-                            subtitle: "Years of Experience",
-                            icon: Icons.calendar_today,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: _buildCardItem(
+                              title: "Designation",
+                              subtitle: "Collection Manager",
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                            child: Container(
+                              height: 0.2,
+                              color: Colors.grey[400],
+                              width: double.infinity,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: _buildCardItem(
+                              title: "Employee Code",
+                              subtitle: "1001",
+                            ),
                           ),
                         ],
                       ),
@@ -211,25 +234,28 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildCardItem(
-      {required String title, required String subtitle, required IconData icon}) {
-    return Column(
+      {required String title,required String subtitle,}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          title,
-          style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.titleColor),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          subtitle,
+          '$title: ',
+          textAlign: TextAlign.start,
           style: const TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.iconColor),
-          textAlign: TextAlign.center,
+              fontWeight: FontWeight.normal,
+              color: AppColors.textColor),
         ),
+        Text(
+          subtitle,
+          textAlign: TextAlign.start,
+          style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: AppColors.titleColor),
+        ),
+
       ],
     );
   }
@@ -314,7 +340,7 @@ void _showThemeSelectionDialog(BuildContext context) {
             ),
             _buildThemeOption(
               context,
-              title: "System default",
+              title: "System Default",
               isSelected: true, // Replace with actual theme state
             ),
           ],

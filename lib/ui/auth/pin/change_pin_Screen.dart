@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../common/primary_button.dart';
-import '../utils/colors.dart';
-import 'homeScreen.dart';
+import '../../dashboard/homeScreen.dart';
 
-class SetPinScreen extends StatefulWidget {
-  const SetPinScreen({super.key});
+class ChangePinScreen extends StatefulWidget {
+  const ChangePinScreen({super.key});
 
   @override
-  State<SetPinScreen> createState() => _SetPinScreenState();
+  State<ChangePinScreen> createState() => _ChangePinScreenState();
 }
 
-class _SetPinScreenState extends State<SetPinScreen> {
-  String pin = '';
+String pin = '';
+bool existing = true;
+TextEditingController pinController = TextEditingController();
 
+class _ChangePinScreenState extends State<ChangePinScreen> {
+  String text = 'Verify 4-digit security pin';
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -81,8 +82,8 @@ class _SetPinScreenState extends State<SetPinScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const Text('Verify 4-digit security pin',
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+              Text(text,
+                  style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                   textAlign: TextAlign.center),
               const SizedBox(
                 height: 20,
@@ -90,27 +91,27 @@ class _SetPinScreenState extends State<SetPinScreen> {
               Pinput(
                 length: 4,
                 autofocus: true,
+                controller: pinController,
                 defaultPinTheme: defaultPinTheme,
                 submittedPinTheme: submittedPinTheme,
                 focusedPinTheme: focusedPinTheme,
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                 showCursor: true,
+                closeKeyboardWhenCompleted: false,
                 onCompleted: (value) {
                   pin = value;
+                  savePin();
                 },
               ),
               const SizedBox(
                 height: 30,
               ),
-              PrimaryButton(
-                color: AppColors.primaryColor,
-                borderColor: AppColors.primaryColor,
-                onPressed: () {
-                  savePin();
-                },
-                context: context,
-                text: 'Set Pin',
-              )
+              const SizedBox(
+                height: 10,
+              ),
+              const Text('Forgot Pin?',
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                  textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -119,25 +120,33 @@ class _SetPinScreenState extends State<SetPinScreen> {
   }
 
   void savePin() async {
-    if (pin.isEmpty || pin.length < 4) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Enter Pin!")));
-    } else {
-      var pref = await SharedPreferences.getInstance();
+    var pref = await SharedPreferences.getInstance();
+    var existingPin = pref.getString('pin').toString();
 
-      await pref.setString('pin', pin);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Pin Saved!")));
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => const HomeScreen()), // Your Home Screen
-      // );
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
-        return const HomeScreen();
-      }), (r){
-        return false;
-      });
+    if (pin.isEmpty || pin.length < 4) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter Pin!")));
+    } else {
+      if (existing) {
+        if (existingPin == pin) {
+          existing = false;
+          pin = '';
+          pinController.clear();
+          setState(() {
+            text = 'Enter New 4-digit security pin';
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Incorrect Pin!")));
+        }
+      } else {
+        await pref.setString('pin', pin);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Pin Saved!")));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen()), // Your Home Screen
+        );
+      }
     }
   }
 }

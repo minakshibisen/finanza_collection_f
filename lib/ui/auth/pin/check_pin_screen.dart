@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'homeScreen.dart';
+import '../../dashboard/homeScreen.dart';
+import '../login_screen.dart';
 
-class ChangePinScreen extends StatefulWidget {
-  const ChangePinScreen({super.key});
+class CheckPinScreen extends StatefulWidget {
+  const CheckPinScreen({super.key});
 
   @override
-  State<ChangePinScreen> createState() => _ChangePinScreenState();
+  State<CheckPinScreen> createState() => _CheckPinScreenState();
 }
 
 String pin = '';
-bool existing = true;
-TextEditingController pinController = TextEditingController();
 
-class _ChangePinScreenState extends State<ChangePinScreen> {
-  String text = 'Verify 4-digit security pin';
+class _CheckPinScreenState extends State<CheckPinScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -82,8 +81,8 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               const SizedBox(
                 height: 10,
               ),
-              Text(text,
-                  style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+              const Text('Verify 4-digit security pin',
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                   textAlign: TextAlign.center),
               const SizedBox(
                 height: 20,
@@ -91,7 +90,6 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               Pinput(
                 length: 4,
                 autofocus: true,
-                controller: pinController,
                 defaultPinTheme: defaultPinTheme,
                 submittedPinTheme: submittedPinTheme,
                 focusedPinTheme: focusedPinTheme,
@@ -100,11 +98,23 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                 closeKeyboardWhenCompleted: false,
                 onCompleted: (value) {
                   pin = value;
-                  savePin();
+                  checkPin();
                 },
               ),
               const SizedBox(
                 height: 30,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  );
+                },
+                child: const Text('Register With Login ID?',
+                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    textAlign: TextAlign.center),
               ),
               const SizedBox(
                 height: 10,
@@ -119,33 +129,22 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
     );
   }
 
-  void savePin() async {
-    var pref = await SharedPreferences.getInstance();
-    var existingPin = pref.getString('pin').toString();
-
+  void checkPin() async {
     if (pin.isEmpty || pin.length < 4) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter Pin!")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Enter Pin!")));
     } else {
-      if (existing) {
-        if (existingPin == pin) {
-          existing = false;
-          pin = '';
-          pinController.clear();
-          setState(() {
-            text = 'Enter New 4-digit security pin';
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Incorrect Pin!")));
-        }
-      } else {
-        await pref.setString('pin', pin);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Pin Saved!")));
-        Navigator.push(
+      var pref = await SharedPreferences.getInstance();
+      var existingPin = pref.getString('pin');
+      if (existingPin == pin) {
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => HomeScreen()), // Your Home Screen
         );
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Incorrect Pin!")));
       }
     }
   }

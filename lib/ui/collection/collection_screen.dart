@@ -1,8 +1,8 @@
-import 'package:finanza_collection_f/ui/add_collection_screen.dart';
-import 'package:finanza_collection_f/ui/add_ptp_screen.dart';
-import 'package:finanza_collection_f/ui/ptp_screen.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
+import 'package:finanza_collection_f/ui/ptp/add_ptp_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'detail_screen.dart';
@@ -54,18 +54,21 @@ class _CollectionScreenState extends State<CollectionScreen> {
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: CollectionItemCard(
-                    title: items[index],
-                    amount: '14,000',
-                    lan: '101100156126',
-                    address:
-                        'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD, Pune City PUNE Kothrud S.O 411038, Test Landmark, PUNE, MAHARASHTRA - 411038',
-                    dueDays: '60',
-                    onTap: () {
-                      // Handle item tap if needed
-                    },
+                return FadeInLeft(
+                  delay: Duration(milliseconds: index * 180),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: CollectionItemCard(
+                      title: items[index],
+                      amount: '14,000',
+                      lan: '101100156126',
+                      address:
+                          'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD, Pune City PUNE Kothrud S.O 411038, Test Landmark, PUNE, MAHARASHTRA - 411038',
+                      dueDays: '60',
+                      onTap: () {
+                        // Handle item tap if needed
+                      },
+                    ),
                   ),
                 );
               },

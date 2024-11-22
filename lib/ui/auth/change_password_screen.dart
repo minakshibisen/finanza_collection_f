@@ -1,8 +1,8 @@
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/utils/default_app_bar.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../common/primary_button.dart';
+import '../../common/primary_button.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

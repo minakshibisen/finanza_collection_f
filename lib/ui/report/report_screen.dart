@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/default_app_bar.dart';
+import '../../common/default_app_bar.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
