@@ -1,308 +1,239 @@
-import 'package:finanza_collection_f/common/default_app_bar.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-
 import '../../utils/colors.dart';
+import '../../common/default_app_bar.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({super.key});
+
+  const DetailScreen({super.key,});
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
-
+  _DetailScreenState createState() => _DetailScreenState();
 }
 
+List<String> items = [
+  'Pramod Kumar Matho',
+  'Minakshi Bisen',
+  'Minakshi Bisen',
+  'Minakshi Bisen',
+];
+
 class _DetailScreenState extends State<DetailScreen> {
-  List<String> items = [
-    'Pramod Kumar Matho',
-  ];
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Details", size: size),
-     body:
-     Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         const Padding(
-           padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-           child: Text(
-             "Account Detail",
-             style: TextStyle(
-               color: AppColors.titleColor,
-               fontSize: 16,
-               fontWeight: FontWeight.w600,
-             ),
-           ),
-         ),
-         Padding(
-           padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-           child: Container(
-             width: double.infinity,
-             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
-             decoration: BoxDecoration(
-               color: AppColors.lightGrey,
-               borderRadius: BorderRadius.circular(10),
-             ),
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "Number Of EMI's Due",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 10),
-                   child: Container(
-                     color: AppColors.textColor,
-                         width: double.infinity,
-                         height: 0.8,
-                       ),
-                 ),
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "EMI's Due",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 10),
-                   child: Container(
-                     color: AppColors.textColor,
-                     width: double.infinity,
-                     height: 0.8,
-                   ),
-                 ),
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "Bounce Charges",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 10),
-                   child: Container(
-                     color: AppColors.textColor,
-                     width: double.infinity,
-                     height: 0.8,
-                   ),
-                 ),
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "Interest on Do Principle",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 10),
-                   child: Container(
-                     color: AppColors.textColor,
-                     width: double.infinity,
-                     height: 0.8,
-                   ),
-                 ),
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "Penal Interest",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 10),
-                   child: Container(
-                     color: AppColors.textColor,
-                     width: double.infinity,
-                     height: 0.8,
-                   ),
-                 ),
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "Installment Amount",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 10),
-                   child: Container(
-                     color: AppColors.textColor,
-                     width: double.infinity,
-                     height: 0.8,
-                   ),
-                 ),
-                 const Padding(
-                   padding: EdgeInsets.all(5.0),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                         "Total Due",
-                         style: TextStyle(
-                           color: AppColors.textColor,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                       Text(
-                         "00",
-                         style: TextStyle(
-                           color: AppColors.titleColor,
-                           fontSize: 12,
-                           fontWeight: FontWeight.w600,
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionTitle(title: "Account Detail"),
+              const AccountDetailCard(),
+              const SectionTitle(title: "Loan Details"),
+              const InstallmentDetailCard(),
+              const SectionTitle(title: "List Of Application Members"),
+              SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return FadeInLeft(
+                      delay: Duration(milliseconds: index * 160),
+                      child: CollectionItemCard(
+                        title: items[index],
+                        onTap: () {
+                          // Handle item tap if needed
+                        },
+                        mobile: '0987654321',
+                        address: 'Vijay Nagar Indore,452010',
+                        status: 'Co Applicant',
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-               ],
-             ),
-           ),
-         ),
-         const Padding(
-           padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-           child: Text(
-             "List Of Application Members",
-             style: TextStyle(
-               color: AppColors.titleColor,
-               fontSize: 16,
-               fontWeight: FontWeight.w600,
-             ),
-           ),
-         ),
-         Expanded(
-           child: ListView.builder(
-             itemCount: items.length,
-             itemBuilder: (context, index) {
-               return Padding(
-                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                 child: CollectionItemCard(
-                   title: items[index],
-                   mobile: '0987654321',
 
-                   address:
-                   'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD, Pune City PUNE Kothrud S.O 411038, Test Landmark, PUNE, MAHARASHTRA - 411038',
-                   status: 'Co-applicant',
-                   onTap: () {
-                     // Handle item tap if needed
-                   },
-                 ),
-               );
-             },
-           ),
-         ),
-       ],
-     ),
+class InstallmentDetailCard extends StatelessWidget {
+  const InstallmentDetailCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, String>> details = [
+      {"title": "Installment Amount", "value": "00"},
+      {"title": "Installment Date", "value": "00"},
+      {"title": "Next Due Date", "value": "00"},
+      {"title": "Last Receipt Date", "value": "00"},
+      {"title": "Loan Status", "value": "00"},
+    ];
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: details.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          return InstallmentDetailRow(
+            item: item,
+            isLast: index == details.length - 1, // Set isLast for the last item
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+
+class InstallmentDetailRow extends StatelessWidget {
+  final Map<String, String> item;
+  final bool isLast;
+
+  const InstallmentDetailRow({super.key, required this.item, this.isLast = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                item['title']!,
+                style: const TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                item['value']!,
+                style: const TextStyle(
+                  color: AppColors.titleColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (!isLast)
+            const Divider(color: AppColors.textColor, thickness: 0.5),
+        ],
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String title;
+
+  const SectionTitle({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: AppColors.titleColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class AccountDetailCard extends StatelessWidget {
+  const AccountDetailCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, String>> details = [
+      {"title": "Number Of Overdue EMI's", "value": "00"},
+      {"title": "Overdue Installment", "value": "00"},
+      {"title": "Overdue Bounce Charges", "value": "00"},
+      {"title": "Overdue Charges", "value": "00"},
+      {"title": "Total Overdue Amount", "value": "00"},
+      {"title": "Future Principle", "value": "00"},
+      {"title": "Total Outstanding Amount", "value": "00"},
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: details.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          return InstallmentDetailRow(
+            item: item,
+            isLast: index == details.length - 1, // Set isLast for the last item
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class AccountDetailRow extends StatelessWidget {
+  final Map<String, String> item;
+  final bool isLast;
+
+  const AccountDetailRow({super.key, required this.item, this.isLast = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                item['title']!,
+                style: const TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                item['value']!,
+                style: const TextStyle(
+                  color: AppColors.titleColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (!isLast)
+            const Divider(color: AppColors.textColor, thickness: 0.5),
+        ],
+      ),
     );
   }
 }
@@ -327,175 +258,66 @@ class CollectionItemCard extends StatefulWidget {
   State<CollectionItemCard> createState() => _CollectionItemCardState();
 }
 
-
 class _CollectionItemCardState extends State<CollectionItemCard> {
-  var isOpen = false;
+  bool isOpen = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          isOpen = !isOpen;
-        });
-      },
+      onTap: widget.onTap,
       child: Card(
         color: Colors.white,
         elevation: 1,
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          children: [
-            Container(
-              // color: AppColors.lightGrey,
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.titleColor,
-                        ),
-                      ),
-                    ],
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRow('Name', widget.title, AppColors.titleColor),
+              const SizedBox(height: 4),
+              _buildRow(
+                  'Applicant Status', widget.status, AppColors.primaryColor),
+              const SizedBox(height: 4),
+              _buildRow('Mobile', widget.mobile, AppColors.titleColor),
+              if (isOpen)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    widget.address,
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.titleColor),
+                    softWrap: true,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Applicant Status: ',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.titleColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            widget.status,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Mobile: ',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.titleColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            widget.mobile,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.titleColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ],
-                  ),
-                  if (isOpen)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const SizedBox(height: 8),
-                        Text(
-                          textAlign: TextAlign.start,
-                          widget.address,
-                          style: const TextStyle(
-                              fontSize: 12, color: AppColors.titleColor),
-                        ),
-                        // Container(
-                        //   decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.titleColor))),
-                        //   padding: EdgeInsets.symmetric(vertical: 1, horizontal: 3),
-                        //   child: const Text(
-                        //     'View Details',
-                        //     style: TextStyle(fontSize: 12, color: AppColors.titleColor, fontWeight: FontWeight.bold),
-                        //   ),
-                        // ),
-                        // const SizedBox(height: 8),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-            // Container(
-            //   padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
-            //   decoration: const BoxDecoration(
-            //       color: AppColors.lightGrey,
-            //       // border: Border(top: BorderSide(color: AppColors.lightGrey)),
-            //       shape: BoxShape.rectangle,
-            //       borderRadius: BorderRadiusDirectional.only(
-            //           bottomEnd: Radius.circular(12),
-            //           bottomStart: Radius.circular(12))),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //     children: [
-            //       // _buildActionButton(Icons.article, 'Detail', Colors.green),
-            //       // Container(
-            //       //   color: AppColors.textColor,
-            //       //   width: .5,
-            //       //   padding: EdgeInsets.symmetric(vertical: 5),
-            //       // ),
-            //       _buildActionButton(
-            //           Icons.location_on, 'Location', Colors.orange),
-            //       Container(
-            //         color: AppColors.textColor,
-            //         width: .5,
-            //         padding: EdgeInsets.symmetric(vertical: 5),
-            //       ),
-            //       _buildActionButton(Icons.handshake, 'PTP', Colors.orange),
-            //       Container(
-            //         color: AppColors.textColor,
-            //         width: .5,
-            //         padding: EdgeInsets.symmetric(vertical: 5),
-            //       ),
-            //       _buildActionButton(
-            //           Icons.account_balance_wallet, 'Collection', Colors.green),
-            //     ],
-            //   ),
-            // ),
-          ],
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color) {
+  Widget _buildRow(String label, String value, Color valueColor) {
     return Row(
       children: [
-        Icon(icon, size: 15),
-        const SizedBox(width: 4),
         Text(
-          label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          '$label: ',
+          style: const TextStyle(
+            fontSize: 13,
+            color: AppColors.titleColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            color: valueColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

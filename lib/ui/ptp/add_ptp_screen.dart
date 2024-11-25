@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../common/input_field.dart';
 import '../../common/title_input_field.dart';
+import '../../common/titled_dropdown.dart';
 
 class AddPtpScreen extends StatefulWidget {
   const AddPtpScreen({super.key});
@@ -18,6 +19,12 @@ final TextEditingController _descriptionController = TextEditingController();
 class _AddPtpScreenState extends State<AddPtpScreen> {
   List<String> items = [
     'Pramod Kumar Matho',
+  ];
+  List<String> visitLocationList = [
+    "a",
+    "b",
+    "c",
+    "d",
   ];
   get inputController => null;
 
@@ -36,6 +43,13 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
           children: [
             const InputFieldTitle(titleText: "Next Visit Date/Time"),
             DatePickerField(),
+            const SizedBox(
+              height: 15,
+            ),
+            TitledDropdown(
+                items: visitLocationList,
+                title: "Visit Location",
+                onChanged: (String? value) {}),
             const SizedBox(
               height: 15,
             ),
