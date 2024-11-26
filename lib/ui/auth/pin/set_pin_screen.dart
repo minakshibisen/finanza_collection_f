@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../common/primary_button.dart';
 import '../../../utils/colors.dart';
 import '../../dashboard/homeScreen.dart';

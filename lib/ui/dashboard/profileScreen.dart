@@ -86,149 +86,149 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Profile Section
-          Stack(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-              Container(
-                height: size.height * 0.3,
-                color: AppColors.primaryColor,
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
-                child: FadeIn(
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage:
-                        AssetImage('assets/images/ic_image.png'),
-                      ),
-                      Column(
+              Stack(
+                children: [
+                  Container(
+                    height: size.height * 0.3,
+                    color: AppColors.primaryColor,
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+                    child: FadeIn(
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SizedBox(height: 10),
-                          Text(
-                            "User Name", // Replace with user name
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                            AssetImage('assets/images/ic_image.png'),
                           ),
-                          SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Column(
                             children: [
-                              Icon(Icons.mail, color: Colors.white, size: 16),
-                              SizedBox(width: 5),
+                              SizedBox(height: 10),
                               Text(
-                                "user@example.com",
+                                "User Name", // Replace with user name
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.mail, color: Colors.white, size: 16),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "user@example.com",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 13),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              // Profile Stats Card
-              Column(
-                children: [
-                  SizedBox(height: size.height * 0.26),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        color: AppColors.lightGrey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            child: _buildCardItem(
-                              title: "Branch",
-                              subtitle: "Delhi - CP",
-                            ),
-                          ),
-                          Padding(
-                             padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-                            child: Container(
-                              height: 0.2,
-                              color: Colors.grey[400],
-                              width: double.infinity,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            child: _buildCardItem(
-                              title: "Designation",
-                              subtitle: "Collection Manager",
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-                            child: Container(
-                              height: 0.2,
-                              color: Colors.grey[400],
-                              width: double.infinity,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            child: _buildCardItem(
-                              title: "Employee Code",
-                              subtitle: "1001",
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
+                  ),
+                  // Profile Stats Card
+                  Column(
+                    children: [
+                      SizedBox(height: size.height * 0.26),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppColors.lightGrey,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                child: _buildCardItem(
+                                  title: "Branch",
+                                  subtitle: "Delhi - CP",
+                                ),
+                              ),
+                              Padding(
+                                 padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                                child: Container(
+                                  height: 0.2,
+                                  color: Colors.grey[400],
+                                  width: double.infinity,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                child: _buildCardItem(
+                                  title: "Designation",
+                                  subtitle: "Collection Manager",
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                                child: Container(
+                                  height: 0.2,
+                                  color: Colors.grey[400],
+                                  width: double.infinity,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                child: _buildCardItem(
+                                  title: "Employee Code",
+                                  subtitle: "1001",
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
+              Column(
+                children: listItems.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final item = entry.value;
+                      return FadeInLeft(
+                        duration: const Duration(milliseconds: 500),
+                        delay: Duration(milliseconds: index * 200), // Staggered delay
+                        child: Column(
+                          children: [
+                            _buildListTile(
+                              title: item['title']!,
+                              leadingIcon: item['icon']!,
+                              onTap: item['onTap']!,
+                            ),
+                            if (index != listItems.length - 1)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 15),
+                                child: Container(
+                                  width: double.infinity,
+                                  color: Colors.grey,
+                                  height: 0.3,
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+              ),
             ],
           ),
-          const SizedBox(height: 10),
-          // List of settings options with staggered animation
-          Expanded(
-            child: ListView.builder(
-              itemCount: listItems.length,
-              itemBuilder: (context, index) {
-                final item = listItems[index];
-                return FadeInLeft(
-                  duration: const Duration(milliseconds: 500),
-                  delay: Duration(milliseconds: index * 200), // Staggered delay
-                  child: Column(
-                    children: [
-                      _buildListTile(
-                        title: item['title']!,
-                        leadingIcon: item['icon']!,
-                        onTap: item['onTap']!,
-                      ),
-                      if (index != listItems.length - 1)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 3, horizontal: 15),
-                          child: Container(
-                            width: double.infinity,
-                            color: Colors.grey,
-                            height: 0.3,
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

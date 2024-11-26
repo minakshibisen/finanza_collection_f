@@ -4,8 +4,9 @@ import '../../utils/colors.dart';
 import '../../common/default_app_bar.dart';
 
 class DetailScreen extends StatefulWidget {
-
-  const DetailScreen({super.key,});
+  const DetailScreen({
+    super.key,
+  });
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -13,7 +14,6 @@ class DetailScreen extends StatefulWidget {
 
 List<String> items = [
   'Pramod Kumar Matho',
-  'Minakshi Bisen',
   'Minakshi Bisen',
   'Minakshi Bisen',
 ];
@@ -36,26 +36,24 @@ class _DetailScreenState extends State<DetailScreen> {
               const SectionTitle(title: "Loan Details"),
               const InstallmentDetailCard(),
               const SectionTitle(title: "List Of Application Members"),
-              SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return FadeInLeft(
-                      delay: Duration(milliseconds: index * 160),
-                      child: CollectionItemCard(
-                        title: items[index],
-                        onTap: () {
-                          // Handle item tap if needed
-                        },
-                        mobile: '0987654321',
-                        address: 'Vijay Nagar Indore,452010',
-                        status: 'Co Applicant',
-                      ),
-                    );
-                  },
-                ),
-              ),
+              Column(
+                children: items.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final item = entry.value;
+                  return FadeInLeft(
+                    delay: Duration(milliseconds: index * 160),
+                    child: CollectionItemCard(
+                      title: item,
+                      onTap: () {
+                        // Handle item tap if needed
+                      },
+                      mobile: '0987654321',
+                      address: 'Vijay Nagar Indore,452010',
+                      status: 'Co Applicant',
+                    ),
+                  );
+                }).toList(),
+              )
             ],
           ),
         ),
@@ -63,7 +61,6 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
-
 
 class InstallmentDetailCard extends StatelessWidget {
   const InstallmentDetailCard({super.key});
@@ -98,12 +95,12 @@ class InstallmentDetailCard extends StatelessWidget {
   }
 }
 
-
 class InstallmentDetailRow extends StatelessWidget {
   final Map<String, String> item;
   final bool isLast;
 
-  const InstallmentDetailRow({super.key, required this.item, this.isLast = false});
+  const InstallmentDetailRow(
+      {super.key, required this.item, this.isLast = false});
 
   @override
   Widget build(BuildContext context) {
