@@ -12,15 +12,19 @@ class ApiHelper {
     required String url,
     required Map<String, dynamic> body,
   }) async {
+    print(body);
     try {
       final response = await http.post(
         Uri.parse(url),
         body: body,
       );
+      // print(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
+        print('Http Error:');
+        print(response.body);
         return {
           'error': true,
           'message': 'HTTP Error: ${response.statusCode}',
@@ -28,6 +32,8 @@ class ApiHelper {
         };
       }
     } catch (e) {
+      print('Exception:');
+      print(e.toString());
       return {
         'error': true,
         'message': 'An exception occurred',

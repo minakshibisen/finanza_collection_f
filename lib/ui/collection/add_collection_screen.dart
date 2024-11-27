@@ -7,18 +7,18 @@ import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/input_field.dart';
+import '../../common/user_banner.dart';
 import '../../utils/common_util.dart';
 
 class AddCollectionScreen extends StatefulWidget {
-  const AddCollectionScreen({super.key});
+  const AddCollectionScreen({super.key, required this.name, required this.lan});
+
+  final String name;
+  final String lan;
 
   @override
   State<AddCollectionScreen> createState() => _AddCollectionScreenState();
 }
-
-final TextEditingController _dateController = TextEditingController();
-final TextEditingController _receiptController = TextEditingController();
-final TextEditingController _commentController = TextEditingController();
 
 class _AddCollectionScreenState extends State<AddCollectionScreen> {
   List<String> receiptModeList = [
@@ -34,6 +34,10 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
     "Option 4",
   ];
 
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _receiptController = TextEditingController();
+  final TextEditingController _commentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -47,6 +51,10 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const UserBanner(
+                  name: 'CHANDA PRAKASH RAV',
+                  lan: '101101100001',
+                ),
                 TitledDropdown(
                     items: receiptModeList,
                     title: "Receipt Mode",

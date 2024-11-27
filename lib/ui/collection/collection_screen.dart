@@ -1,43 +1,125 @@
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
 import 'package:finanza_collection_f/ui/ptp/add_ptp_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
+import 'package:finanza_collection_f/utils/constants.dart';
+import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
+import '../../main.dart';
+import '../../utils/session_helper.dart';
 import 'detail_screen.dart';
 
 class CollectionScreen extends StatefulWidget {
   const CollectionScreen({super.key});
 
   @override
-  _CollectionScreenState createState() => _CollectionScreenState();
+  CollectionScreenState createState() => CollectionScreenState();
 }
 
-class _CollectionScreenState extends State<CollectionScreen> {
+class CollectionScreenState extends State<CollectionScreen> {
+  var isLoading = false;
+  List<dynamic> collectionItems = [];
   final TextEditingController _searchController = TextEditingController();
-  List<String> items = [
-    'Pramod Kumar Matho',
-    'Bhooki Chudail',
-  ];
-  List<String> filteredItems = [];
+  Timer? _debounceTimer;
+
+  void _collectionListApi() async {
+    // Prevent multiple simultaneous calls
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+      var companyId = await SessionHelper.getSessionData(SessionKeys.companyId);
+      var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
+
+      final response = await ApiHelper.postRequest(
+        url: BaseUrl + searchCustomer,
+        body: {
+          'user_id': userId.toString(),
+          'company_id': companyId.toString(),
+          'branch_id': branchId.toString(),
+          'search_key': _searchController.text.trim(),
+        },
+      );
+
+      // Check if the widget is still mounted before updating state
+      if (!mounted) return;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+        setState(() {
+          collectionItems = [];
+          isLoading = false;
+        });
+        return;
+      }
+
+      final data = response;
+
+      if (data['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        setState(() {
+          collectionItems = [];
+          isLoading = false;
+        });
+        return;
+      }
+
+      setState(() {
+        collectionItems = data['response'] ?? [];
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+
+      setState(() {
+        collectionItems = [];
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    filteredItems = items;
-  }
 
-  void _filterItems(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        filteredItems = items;
-      } else {
-        filteredItems = items
-            .where((item) => item.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
+    // Add listener with debounce to prevent excessive API calls
+    _searchController.addListener(() {
+      if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+
+      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+        if (_searchController.text.isEmpty ||
+            _searchController.text.length > 2) {
+          _collectionListApi();
+        }
+      });
     });
+
+    // Initial API call
+    _collectionListApi();
   }
 
   @override
@@ -50,30 +132,42 @@ class _CollectionScreenState extends State<CollectionScreen> {
       body: Column(
         children: [
           _buildSearchLayout(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return FadeInLeft(
-                  delay: Duration(milliseconds: index * 180),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: CollectionItemCard(
-                      title: items[index],
-                      amount: '14,000',
-                      lan: '101100156126',
-                      address:
-                          'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD, Pune City PUNE Kothrud S.O 411038, Test Landmark, PUNE, MAHARASHTRA - 411038',
-                      dueDays: '60',
-                      onTap: () {
-                        // Handle item tap if needed
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          isLoading
+              ? const SizedBox(height: 200, child: LoadingWidget(size: 40))
+              : Expanded(
+                  child: collectionItems.isEmpty
+                      ? const Center(
+                          child: Text(
+                            "No collections found",
+                            style: TextStyle(color: AppColors.titleLightColor),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: collectionItems.length,
+                          itemBuilder: (context, index) {
+                            var item = collectionItems[index];
+                            return FadeInLeft(
+                              delay: Duration(milliseconds: (index + 10) +  100),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: CollectionItemCard(
+                                  title: item['customer_name'] ?? 'Unknown',
+                                  amount:
+                                      item['overdue_amount']?.toString() ?? '0',
+                                  lan: item['lan'] ?? 'N/A',
+                                  address:
+                                      item['Communication'] ?? 'No address',
+                                  dueDays: item['dpd']?.toString() ?? '0',
+                                  onTap: () {
+                                    // Handle item tap if needed
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
         ],
       ),
     );
@@ -89,6 +183,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 }
@@ -129,7 +224,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       child: Card(
         color: Colors.white,
         elevation: 1,
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -200,9 +295,6 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         const SizedBox(height: 8),
-
-
-
                         Text(
                           textAlign: TextAlign.start,
                           widget.address,
@@ -240,7 +332,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               decoration: const BoxDecoration(
                   color: AppColors.lightGrey,
                   // border: Border(top: BorderSide(color: AppColors.lightGrey)),
@@ -258,15 +350,16 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
                   _buildActionButton(
-                      Icons.location_on, 'Location', Colors.orange,(){}),
+                      Icons.location_on, 'Location', Colors.orange, () {}),
                   Container(
                     color: AppColors.textColor,
                     width: .5,
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
-                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange,(){
+                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange, () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const AddPtpScreen()),
+                      MaterialPageRoute(
+                          builder: (context) =>  AddPtpScreen(lan:widget.lan)),
                     );
                   }),
                   Container(
@@ -275,9 +368,11 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   _buildActionButton(
-                      Icons.account_balance_wallet, 'Collection', Colors.green,(){
+                      Icons.account_balance_wallet, 'Collection', Colors.green,
+                      () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const AddCollectionScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => AddCollectionScreen(lan: widget.lan, name: widget.title,)),
                     );
                   }),
                 ],
@@ -289,7 +384,8 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color,VoidCallback onTap) {
+  Widget _buildActionButton(
+      IconData icon, String label, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -345,11 +441,11 @@ class RoundedSearchInput extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
-            borderRadius: BorderRadius.all(Radius.circular(35.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(35.0)),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey[600]!, width: 1.5),
-            borderRadius: BorderRadius.all(Radius.circular(35.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(35.0)),
           ),
         ),
       ),

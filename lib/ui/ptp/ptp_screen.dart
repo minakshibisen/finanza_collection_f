@@ -1,25 +1,107 @@
+import 'dart:math';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
 import '../../common/input_field.dart';
 import '../../common/title_input_field.dart';
+import '../../main.dart';
 import '../../utils/colors.dart';
+import '../../utils/constants.dart';
+import '../../utils/loading_widget.dart';
+import '../../utils/session_helper.dart';
 import 'add_ptp_screen.dart';
 
 class PTPScreen extends StatefulWidget {
   const PTPScreen({super.key});
 
   @override
-  State<PTPScreen> createState() => _PTPScreenState();
+  PTPScreenState createState() => PTPScreenState();
 }
 
-class _PTPScreenState extends State<PTPScreen> {
-  List<String> items = [
-    'Pramod Kumar Matho',
-    'Bhooki Chudail',
-  ];
+class PTPScreenState extends State<PTPScreen> {
+  var isLoading = false;
+  List<dynamic> ptpItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _ptpListApi();
+  }
+
+  void _ptpListApi() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+      var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
+
+      final response = await ApiHelper.postRequest(
+        url: BaseUrl + getPTPList,
+        body: {
+          'user_id': userId.toString(),
+          'branch_id': branchId.toString(),
+        },
+      );
+
+      // Check if the widget is still mounted before updating state
+      if (!mounted) return;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+        setState(() {
+          ptpItems = [];
+          isLoading = false;
+        });
+        return;
+      }
+ print(response);
+      final data = response;
+
+      if (data['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        setState(() {
+          ptpItems = [];
+          isLoading = false;
+        });
+        return;
+      }
+
+      setState(() {
+        ptpItems = data['response'] ?? [];
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+
+      setState(() {
+        ptpItems = [];
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,85 +109,50 @@ class _PTPScreenState extends State<PTPScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Promise To Pay List", size: size),
-      body:
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           const Padding(
-             padding: EdgeInsets.symmetric(horizontal: 16.0,vertical: 5),
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 Text(
-                   "Promises For ",
-                   style: TextStyle(
-                     color: AppColors.titleColor,
-                     fontSize: 16,
-                     fontWeight: FontWeight.bold,
-                   ),
-                 ),
-                 SizedBox(
-                   height: 15,
-                 ),
-                 DatePickerField(),
-                 SizedBox(
-                   height: 5,
-                 ),
-                 // Text(
-                 //   "List of Promises ",
-                 //   style: TextStyle(
-                 //     color: AppColors.titleColor,
-                 //     fontSize: 16,
-                 //     fontWeight: FontWeight.bold,
-                 //   ),
-                 // ),
-                 // SizedBox(
-                 //   height: 5,
-                 // ),
-               ],
-             ),
-           ),
-
-
-            // Stack(
-            //   alignment: Alignment.centerLeft,
-            //   children: [
-            //     Container(
-            //       width: double.infinity,
-            //       height: size.height * 0.1,
-            //       decoration: BoxDecoration(
-            //           color: AppColors.primaryColor,
-            //           shape: BoxShape.rectangle,
-            //           borderRadius:
-            //           BorderRadius.only(bottomRight: Radius.circular(200))),
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.all(8.0),
-            //       child: Text(
-            //         "Today: 19 November",
-            //         style: const TextStyle(
-            //           fontSize: 15,
-            //           fontWeight: FontWeight.bold,
-            //           color: Colors.white,
-            //         ),
-            //       ),
-            //     ),
-            //
-            //   ],
-            // ),
-
-            Expanded(
-              child: ListView.builder(
-                itemCount: items.length,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Promises For ",
+                    style: TextStyle(
+                      color: AppColors.titleColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  DatePickerField(),
+                  SizedBox(height: 5),
+                ],
+              ),
+            ),
+            isLoading
+                ? const SizedBox(height: 200, child: LoadingWidget(size: 40))
+                : Expanded(
+              child: ptpItems.isEmpty
+                  ? const Center(
+                child: Text(
+                  "No PTP found",
+                  style: TextStyle(color: AppColors.titleLightColor),
+                ),
+              )
+                  : ListView.builder(
+                itemCount: ptpItems.length,
                 itemBuilder: (context, index) {
+                  var item = ptpItems[index];
                   return FadeInLeft(
-                    delay: Duration(milliseconds: index * 180),
+                    delay: Duration(milliseconds: min(index * 180, 1000)),
                     child: CollectionItemCard(
-                      title: items[index],
-                      lan: '101100156126',
-                      description: 'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
+                      title: item['customer_name'] ?? 'Unknown',
+                      lan: item['lan'] ?? 'N/A',
+                      description: item['Communication'] ?? 'No address',
                       onTap: () {
                         // Handle item tap if needed
                       },
@@ -282,7 +329,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   // ),
                   _buildActionButton(Icons.handshake, 'PTP', Colors.orange,(){
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const AddPtpScreen()),
+                      MaterialPageRoute(builder: (context) =>  AddPtpScreen(lan: '',)),
                     );
                   }),
                   Container(
@@ -293,7 +340,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   _buildActionButton(
                       Icons.account_balance_wallet, 'Collection', Colors.green,(){
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const AddCollectionScreen()),
+                      MaterialPageRoute(builder: (context) => AddCollectionScreen(name: "", lan: "",)),
                     );
                   }),
                 ],

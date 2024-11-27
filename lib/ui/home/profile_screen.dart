@@ -3,17 +3,46 @@ import 'package:finanza_collection_f/ui/auth/pin/change_pin_Screen.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
+import '../../main.dart';
 import '../../utils/colors.dart';
+import '../../utils/constants.dart';
 import '../auth/change_password_screen.dart';
 import '../auth/pin/check_pin_screen.dart';
 import '../auth/login_screen.dart';
 import '../misc/notification_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+
+  Future<void> profileDetailApi() async {
+
+      final response = await ApiHelper.postRequest(
+        url: BaseUrl + profileDetails,
+        body: {
+          'user_id': SessionKeys.userId,
+        },
+      );
+
+      if (response['error'] == true) {
+      } else {
+        final data = response;
+
+        if(data['status'] == '0') {
+        }
+      }
+    }
+  }
+
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
+
     var size = MediaQuery.of(context).size;
 
     // List of tiles with their respective details
@@ -92,49 +121,8 @@ class ProfileScreen extends StatelessWidget {
           // Profile Section
           Stack(
             children: [
-              Container(
-                height: size.height * 0.3,
-                color: AppColors.primaryColor,
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
-                child: FadeIn(
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage:
-                        AssetImage('assets/images/ic_image.png'),
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(height: 10),
-                          Text(
-                            "User Name", // Replace with user name
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.mail, color: Colors.white, size: 16),
-                              SizedBox(width: 5),
-                              Text(
-                                "user@example.com",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+
+              _buildUserDetailCard(),
               // Profile Stats Card
               Column(
                 children: [
@@ -233,6 +221,52 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+Widget _buildUserDetailCard(){
+  var size = MediaQuery.of(context).size;
+    return  Container(
+      height: size.height * 0.3,
+      color: AppColors.primaryColor,
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+      child: FadeIn(
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            CircleAvatar(
+              radius: 50,
+              backgroundImage:
+              AssetImage('assets/images/ic_image.png'),
+            ),
+            Column(
+              children: [
+                SizedBox(height: 10),
+                Text(
+                  "User Name", // Replace with user name
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.mail, color: Colors.white, size: 16),
+                    SizedBox(width: 5),
+                    Text(
+                      "user@example.com",
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+}
 
   Widget _buildCardItem(
       {required String title,required String subtitle,}) {

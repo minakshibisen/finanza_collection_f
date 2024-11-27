@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/common/common_toast.dart';
@@ -6,7 +7,6 @@ import 'package:finanza_collection_f/common/primary_button.dart';
 import 'package:finanza_collection_f/main.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/utils/common_util.dart';
-import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../common/api_helper.dart';
@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         final data = response;
-        
+
         if(data['status'] == '0') {
           CommonToast.showToast(context: context, title: "Login Failed", description: data['response']['error'].toString(), duration: const Duration(seconds: 10));
         } else {
@@ -77,6 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['mobile']);
           await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['email']);
           await SessionHelper.saveSessionData(SessionKeys.gender, userProfile['gender']);
+          await SessionHelper.saveSessionData(SessionKeys.companyId, userProfile['company_id']);
           await SessionHelper.saveSessionData(SessionKeys.branchList, response['branch_list'].toString());
 
           if (!mounted) return;

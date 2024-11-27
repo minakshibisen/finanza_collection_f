@@ -1,9 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionHelper {
-  static Future<void> saveSessionData(String key, String value) async {
+  static Future<void> saveSessionData(String key, String? value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
+    await prefs.setString(key, value.toString());
   }
 
   static Future<String?> getSessionData(String key) async {

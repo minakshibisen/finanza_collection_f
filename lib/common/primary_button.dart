@@ -42,7 +42,7 @@ class PrimaryButton extends StatelessWidget {
               Color.fromRGBO(24, 102, 169, 0.5803921568627451),
             ])),
         child: Center(
-          child: isLoading ? const LoadingWidget() : Text(
+          child: isLoading ? const LoadingWidget(color: AppColors.textOnPrimary,) : Text(
             text,
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold),

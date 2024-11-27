@@ -1,6 +1,10 @@
 
 
 const getValidateLogin = "getValidateLogin";
+const searchCustomer = "searchCustomer";
+const getPTPList = "getPTPList";
+const savePtpList = "savePtpList";
+const profileDetails = "ProfileDetails";
 
 
 class SessionKeys {
@@ -10,4 +14,6 @@ class SessionKeys {
   static const String gender = "KEY_GENDER";
   static const String mobile = "KEY_MOBILE";
   static const String email = "KEY_MOBILE";
+  static const String companyId = "KEY_COMPANY_ID";
+
 }
