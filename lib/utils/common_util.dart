@@ -1,6 +1,8 @@
 
 
 // Or with comma separators (less precise)
+import 'package:flutter/cupertino.dart';
+
 String getFancyNumber(double number) {
   // Split into integer and decimal parts
   String numberString = number.toStringAsFixed(2);
@@ -15,4 +17,8 @@ String getFancyNumber(double number) {
 
   // Combine back with decimal part
   return '$formattedInteger.${parts[1]}';
+}
+
+void closeKeyboard(BuildContext context) {
+  FocusScope.of(context).unfocus();
 }

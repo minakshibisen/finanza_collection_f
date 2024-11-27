@@ -3,7 +3,7 @@ import 'package:pinput/pinput.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../dashboard/homeScreen.dart';
+import '../../home/home_screen.dart';
 import '../login_screen.dart';
 
 class CheckPinScreen extends StatefulWidget {

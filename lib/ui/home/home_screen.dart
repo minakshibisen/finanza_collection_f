@@ -1,5 +1,5 @@
 import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
-import 'package:finanza_collection_f/ui/dashboard/profileScreen.dart';
+import 'package:finanza_collection_f/ui/home/profileScreen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

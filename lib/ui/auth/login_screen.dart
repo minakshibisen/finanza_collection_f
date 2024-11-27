@@ -1,11 +1,21 @@
+import 'dart:convert';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:finanza_collection_f/ui/dashboard/homeScreen.dart';
-import 'package:finanza_collection_f/ui/auth/pin/set_pin_screen.dart';
+import 'package:finanza_collection_f/common/common_toast.dart';
+import 'package:finanza_collection_f/common/primary_button.dart';
+import 'package:finanza_collection_f/main.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
+import 'package:finanza_collection_f/utils/common_util.dart';
+import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../common/api_helper.dart';
 import '../../common/input_field.dart';
+import 'package:http/http.dart' as http;
+
+import '../../utils/constants.dart';
+import '../../utils/session_helper.dart';
+import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,21 +24,70 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-String errorMessage = '';
-
-TextEditingController usernameController = TextEditingController();
-TextEditingController passwordController = TextEditingController();
-
 class _LoginScreenState extends State<LoginScreen> {
+  String errorMessage = '';
+  var isLoading = false;
+
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   Future<void> loginApi() async {
+
     if (usernameController.text.isEmpty) {
       showSnackBar("Enter Username");
     } else if (passwordController.text.isEmpty) {
       showSnackBar("Enter Password");
     } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const SetPinScreen()),
+      setState(() {
+        isLoading = true;
+      });
+      closeKeyboard(context);
+
+      final response = await ApiHelper.postRequest(
+        url: BaseUrl + getValidateLogin,
+        body: {
+          'user_id': usernameController.text,
+          'password': passwordController.text,
+        },
       );
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Login Failed",
+          description: response['message'],
+        );
+      } else {
+        final data = response;
+        
+        if(data['status'] == '0') {
+          CommonToast.showToast(context: context, title: "Login Failed", description: data['response']['error'].toString(), duration: const Duration(seconds: 10));
+        } else {
+          var response = data['response'];
+          var userdata = response['userdata'];
+          var userProfile = response['userprofile'];
+
+          await SessionHelper.saveSessionData(SessionKeys.userId, userProfile['user_id']);
+          await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['mobile']);
+          await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['email']);
+          await SessionHelper.saveSessionData(SessionKeys.gender, userProfile['gender']);
+          await SessionHelper.saveSessionData(SessionKeys.branchList, response['branch_list'].toString());
+
+          if (!mounted) return;
+
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+            return const HomeScreen();
+          }), (r){
+            return false;
+          });
+        }
+      }
     }
   }
 
@@ -38,11 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
       const SystemUiOverlayStyle(
         systemNavigationBarColor: AppColors.textOnPrimary,
         systemNavigationBarIconBrightness:
-        Brightness.light, // Adjust icon brightness
+            Brightness.light, // Adjust icon brightness
       ),
     );
 
-    bool isLoading = false;
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = screenWidth * 0.07;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -83,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Container(
                             decoration: const BoxDecoration(
                                 image: DecorationImage(
-                                  opacity: 0.5,
+                                    opacity: 0.5,
                                     image: AssetImage(
                                         'assets/images/light-2.png'))),
                           )),
@@ -99,8 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: const BoxDecoration(
                                 image: DecorationImage(
                                     opacity: 0.5,
-                                    image: AssetImage(
-                                        'assets/images/clock.png'))),
+                                    image:
+                                        AssetImage('assets/images/clock.png'))),
                           )),
                     ),
                     Positioned(
@@ -110,7 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             margin: const EdgeInsets.only(top: 50),
                             child: Center(
                               child: Padding(
-                                padding: EdgeInsets.only(top: screenHeight * 0.05),
+                                padding:
+                                    EdgeInsets.only(top: screenHeight * 0.05),
                                 child: Container(
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
@@ -125,7 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
                 child: Column(
                   children: <Widget>[
                     FadeInUp(
@@ -152,34 +212,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 30,
                     ),
                     FadeInUp(
-                        duration: const Duration(milliseconds: 1200),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
-                              return const HomeScreen();
-                            }), (r){
-                              return false;
-                            });
-                          },
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: const LinearGradient(colors: [
-                                  AppColors.primaryColor,
-                                  Color.fromRGBO(
-                                      24, 102, 169, 0.5803921568627451),
-                                ])),
-                            child: const Center(
-                              child: Text(
-                                "Login",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        )),
+                      duration: const Duration(milliseconds: 1200),
+                      child: PrimaryButton(
+                        onPressed: () => loginApi(),
+                        context: context,
+                        text: "Login",
+                        isLoading: isLoading,
+                      ),
+                    ),
                     const SizedBox(
                       height: 40,
                     ),
@@ -187,8 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         duration: const Duration(milliseconds: 1000),
                         child: const Text(
                           "Forgot Password?",
-                          style: TextStyle(
-                              color: AppColors.primaryColor),
+                          style: TextStyle(color: AppColors.primaryColor),
                         )),
                   ],
                 ),
@@ -202,8 +241,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: imageHeight * 0.4,
                       decoration: const BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/client_logo.png'))),
+                              image:
+                                  AssetImage('assets/images/client_logo.png'))),
                     ),
                   )),
             ],
