@@ -1,7 +1,5 @@
 
-
-// Or with comma separators (less precise)
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 String getFancyNumber(double number) {
   // Split into integer and decimal parts
@@ -21,4 +19,10 @@ String getFancyNumber(double number) {
 
 void closeKeyboard(BuildContext context) {
   FocusScope.of(context).unfocus();
+}
+
+void showSnackBar(String s, BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(s)),
+  );
 }

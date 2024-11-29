@@ -1,14 +1,21 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:finanza_collection_f/common/primary_button.dart';
 import 'package:finanza_collection_f/common/title_input_field.dart';
 import 'package:finanza_collection_f/common/titled_dropdown.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
 import '../../common/input_field.dart';
 import '../../common/user_banner.dart';
+import '../../main.dart';
 import '../../utils/common_util.dart';
+import '../../utils/constants.dart';
+import '../../utils/session_helper.dart';
+import '../ptp/add_ptp_screen.dart';
 
 class AddCollectionScreen extends StatefulWidget {
   const AddCollectionScreen({super.key, required this.name, required this.lan});
@@ -21,12 +28,12 @@ class AddCollectionScreen extends StatefulWidget {
 }
 
 class _AddCollectionScreenState extends State<AddCollectionScreen> {
-  List<String> receiptModeList = [
-    "Cash",
-    "Cheque",
-    "Direct Deposit",
-    "Internet",
-  ];
+  // List<String> receiptModeList = [
+  //   "Cash",
+  //   "Cheque",
+  //   "UPI",
+  //   "Internet Banking",
+  // ];
   List<String> bankList = [
     "Option 1",
     "Option 2",
@@ -34,9 +41,96 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
     "Option 4",
   ];
 
+
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _receiptController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
+  String? selectedReceiptMode;
+  var isLoading = false;
+  List<dynamic> receiptModeList = [];
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _receiptController.dispose();
+    super.dispose();
+  }
+  @override
+  void initState() {
+    super.initState();
+    receiptModeApi();
+  }
+
+  void receiptModeApi() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await ApiHelper.getRequest(
+        url: BaseUrl + getReceiptMode,
+      );
+
+      if (!mounted) return;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+        setState(() {
+          receiptModeList = [];
+          isLoading = false;
+        });
+        return;
+      }
+      print(response);
+      final data = response;
+
+      if (data['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        setState(() {
+          receiptModeList = [];
+          isLoading = false;
+        });
+        return;
+      }
+
+      setState(() {
+        receiptModeList = data['response'] ?? [];
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+
+      setState(() {
+        receiptModeList = [];
+        isLoading = false;
+      });
+      if (selectedReceiptMode == null) {
+        CommonToast.showToast(
+          context: context,
+          title: "Validation Error",
+          description: "Please select receipt mode",
+        );
+      }
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +150,12 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                   lan: '101101100001',
                 ),
                 TitledDropdown(
-                    items: receiptModeList,
+                    items: [''],
                     title: "Receipt Mode",
-                    onChanged: (String? value) {}),
+                    onChanged:(value) {
+                      setState(() {
+                        selectedReceiptMode = value;
+                      });}),
                 const SizedBox(
                   height: 15,
                 ),
@@ -97,6 +194,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                 const SizedBox(
                   height: 15,
                 ),
+                PrimaryButton(onPressed: () {}, context: context, text: 'Add Receipt',)
               ],
             ),
           ),
@@ -121,13 +219,10 @@ class _CollectionTypeSelectState extends State<CollectionTypeSelect> {
     "Option 4",
   ];
 
-  List<CollectionItem> items = [
-    CollectionItem(
-      amount: 0,
-      type: "",
-      controller: TextEditingController(), //
-    )
-  ];
+
+
+
+  List<CollectionItem> items = [];
 
   double totalAmount = 0;
 
@@ -142,7 +237,7 @@ class _CollectionTypeSelectState extends State<CollectionTypeSelect> {
       items.add(CollectionItem(
         amount: 0,
         type: type[0],
-        controller: TextEditingController(), //
+        controller: TextEditingController(),
       ));
     });
   }
@@ -168,7 +263,6 @@ class _CollectionTypeSelectState extends State<CollectionTypeSelect> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

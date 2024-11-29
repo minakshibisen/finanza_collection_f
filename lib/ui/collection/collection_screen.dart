@@ -350,16 +350,16 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
                   _buildActionButton(
-                      Icons.location_on, 'Location', Colors.orange, () {}),
+                      Icons.location_on_outlined, 'Location', Colors.orange, () {}),
                   Container(
                     color: AppColors.textColor,
                     width: .5,
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
-                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange, () {
+                  _buildActionButton(Icons.handshake_outlined, 'PTP', Colors.orange, () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) =>  AddPtpScreen(lan:widget.lan)),
+                          builder: (context) =>  AddPtpScreen(lan:widget.lan, name: widget.title,)),
                     );
                   }),
                   Container(
@@ -368,7 +368,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   _buildActionButton(
-                      Icons.account_balance_wallet, 'Collection', Colors.green,
+                      Icons.account_balance_wallet_outlined, 'Collection', Colors.green,
                       () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -394,7 +394,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
           const SizedBox(width: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
           ),
         ],
       ),

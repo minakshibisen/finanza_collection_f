@@ -7,7 +7,8 @@ void main() {
   runApp(const MyApp());
 }
 
-const BaseUrl = "https://uat.bridgelogicsoftware.com/2009/api/";
+// const BaseUrl = "https://uat.bridgelogicsoftware.com/2009/api/";
+const BaseUrl = "http://172.17.1.1/2009/api/";
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

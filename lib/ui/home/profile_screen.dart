@@ -18,31 +18,93 @@ class ProfileScreen extends StatefulWidget {
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String userName = '';
+  String image = '';
+  String email = '';
+  String branch = '';
+  String designation = '';
+  String empCode = '';
 
   Future<void> profileDetailApi() async {
+    var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+    final response = await ApiHelper.postRequest(
+      url: BaseUrl + profileDetails,
+      body: {
+        'user_id': userId,
+      },
+    );
 
-      final response = await ApiHelper.postRequest(
-        url: BaseUrl + profileDetails,
-        body: {
-          'user_id': SessionKeys.userId,
-        },
+    if (response['error'] == true) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Request Failed",
+        description: response['message'] ?? "Unknown error occurred",
       );
+      await SessionHelper.clearAllSessionData();
 
-      if (response['error'] == true) {
+      if (!mounted) return;
+
+      Navigator.of(context).pop();
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const CheckPinScreen()),
+      );
+    } else {
+      final res = response;
+
+      if (!mounted) return;
+
+      if (res['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: res['error']?.toString() ?? "No User found",
+        );
+
+        await SessionHelper.clearAllSessionData();
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const CheckPinScreen()),
+        );
       } else {
-        final data = response;
+        var data = res['response'];
 
-        if(data['status'] == '0') {
-        }
+        setState(() {
+          userName = data['name'].toString();
+          empCode = data['employee_code'].toString();
+          branch = data['branch_id'].toString();
+          email = data['email'].toString();
+          designation = data['designation'].toString();
+        });
+
+        await SessionHelper.saveSessionData(SessionKeys.mobile, data['mobile']);
+        await SessionHelper.saveSessionData(SessionKeys.email, data['email']);
+        await SessionHelper.saveSessionData(SessionKeys.gender, data['gender']);
+        await SessionHelper.saveSessionData(
+            SessionKeys.branchId, data['branch_id']);
+        await SessionHelper.saveSessionData(SessionKeys.username, data['name']);
+        await SessionHelper.saveSessionData(
+            SessionKeys.designation, data['designation']);
+        await SessionHelper.saveSessionData(
+            SessionKeys.employeeCode, data['employee_code']);
+
       }
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    profileDetailApi();
+  }
 
-class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
 
     // List of tiles with their respective details
@@ -121,7 +183,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Profile Section
           Stack(
             children: [
-
               _buildUserDetailCard(),
               // Profile Stats Card
               Column(
@@ -140,14 +201,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
                             child: _buildCardItem(
                               title: "Branch",
-                              subtitle: "Delhi - CP",
+                              subtitle: branch,
                             ),
                           ),
                           Padding(
-                             padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 15),
                             child: Container(
                               height: 0.2,
                               color: Colors.grey[400],
@@ -155,14 +218,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
                             child: _buildCardItem(
                               title: "Designation",
-                              subtitle: "Collection Manager",
+                              subtitle: designation,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 15),
                             child: Container(
                               height: 0.2,
                               color: Colors.grey[400],
@@ -170,10 +235,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
                             child: _buildCardItem(
                               title: "Employee Code",
-                              subtitle: "1001",
+                              subtitle: empCode,
                             ),
                           ),
                         ],
@@ -221,26 +287,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-Widget _buildUserDetailCard(){
-  var size = MediaQuery.of(context).size;
-    return  Container(
+
+  Widget _buildUserDetailCard() {
+    var size = MediaQuery.of(context).size;
+    return Container(
       height: size.height * 0.3,
       color: AppColors.primaryColor,
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
       child: FadeIn(
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage:
-              AssetImage('assets/images/ic_image.png'),
+              backgroundImage: AssetImage('assets/images/ic_image.png'),
             ),
             Column(
               children: [
                 SizedBox(height: 10),
                 Text(
-                  "User Name", // Replace with user name
+                  userName,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -254,9 +320,8 @@ Widget _buildUserDetailCard(){
                     Icon(Icons.mail, color: Colors.white, size: 16),
                     SizedBox(width: 5),
                     Text(
-                      "user@example.com",
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 13),
+                      email,
+                      style: TextStyle(color: Colors.white, fontSize: 13),
                     ),
                   ],
                 ),
@@ -266,10 +331,12 @@ Widget _buildUserDetailCard(){
         ),
       ),
     );
-}
+  }
 
-  Widget _buildCardItem(
-      {required String title,required String subtitle,}) {
+  Widget _buildCardItem({
+    required String title,
+    required String subtitle,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -290,15 +357,14 @@ Widget _buildUserDetailCard(){
               fontWeight: FontWeight.w500,
               color: AppColors.titleColor),
         ),
-
       ],
     );
   }
 
   Widget _buildListTile(
       {required String title,
-        required IconData leadingIcon,
-        required VoidCallback onTap}) {
+      required IconData leadingIcon,
+      required VoidCallback onTap}) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       leading: Icon(leadingIcon, color: AppColors.iconColor),
@@ -425,12 +491,11 @@ void _showLogoutDialog(BuildContext context) {
           ),
           ElevatedButton(
             onPressed: () async {
-
               await SessionHelper.clearAllSessionData();
+              if (!context.mounted) return;
               Navigator.of(context).pop();
               Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => const CheckPinScreen()),
+                MaterialPageRoute(builder: (context) => const CheckPinScreen()),
               );
             },
             child: const Text('Logout'),

@@ -29,6 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       await Future.delayed(const Duration(seconds: 1), () {});
+
+      if(!mounted) return;
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );

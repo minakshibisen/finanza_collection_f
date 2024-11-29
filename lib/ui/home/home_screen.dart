@@ -1,18 +1,25 @@
+import 'package:finanza_collection_f/ui/auth/login_screen.dart';
 import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
 import 'package:finanza_collection_f/ui/home/profile_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
+import '../../main.dart';
+import '../../utils/constants.dart';
+import '../../utils/session_helper.dart';
+import '../auth/pin/check_pin_screen.dart';
 import 'dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
@@ -24,6 +31,69 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    profileDetailApi();
+  }
+
+  Future<void> profileDetailApi() async {
+    var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+    final response = await ApiHelper.postRequest(
+      url: BaseUrl + profileDetails,
+      body: {
+        'user_id': userId,
+      },
+    );
+
+    if (response['error'] == true) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "User Error!",
+        description: response['message'] ?? "Unknown error occurred",
+      );
+      await SessionHelper.clearAllSessionData();
+
+      if (!mounted) return;
+
+      Navigator.of(context).pop();
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    } else {
+      final res = response;
+
+      if (!mounted) return;
+
+      if (res['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "User Error!",
+          description: res['error']?.toString() ?? "No User found",
+        );
+
+        await SessionHelper.clearAllSessionData();
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const CheckPinScreen()),
+        );
+      } else {
+        var data = res['response'];
+
+        await SessionHelper.saveSessionData(SessionKeys.mobile, data['mobile']);
+        await SessionHelper.saveSessionData(SessionKeys.email, data['email']);
+        await SessionHelper.saveSessionData(SessionKeys.gender, data['gender']);
+        await SessionHelper.saveSessionData(SessionKeys.branchId, data['branch_id']);
+        await SessionHelper.saveSessionData(SessionKeys.username, data['name']);
+        await SessionHelper.saveSessionData(SessionKeys.designation, data['designation']);
+        await SessionHelper.saveSessionData(SessionKeys.employeeCode, data['employee_code']);
+      }
+    }
   }
 
   @override

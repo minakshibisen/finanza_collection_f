@@ -67,7 +67,7 @@ class PTPScreenState extends State<PTPScreen> {
         });
         return;
       }
- print(response);
+      print(response);
       final data = response;
 
       if (data['status'] == '0') {
@@ -136,31 +136,43 @@ class PTPScreenState extends State<PTPScreen> {
             isLoading
                 ? const SizedBox(height: 200, child: LoadingWidget(size: 40))
                 : Expanded(
-              child: ptpItems.isEmpty
-                  ? const Center(
-                child: Text(
-                  "No PTP found",
-                  style: TextStyle(color: AppColors.titleLightColor),
-                ),
-              )
-                  : ListView.builder(
-                itemCount: ptpItems.length,
-                itemBuilder: (context, index) {
-                  var item = ptpItems[index];
-                  return FadeInLeft(
-                    delay: Duration(milliseconds: min(index * 180, 1000)),
-                    child: CollectionItemCard(
-                      title: item['customer_name'] ?? 'Unknown',
-                      lan: item['lan'] ?? 'N/A',
-                      description: item['Communication'] ?? 'No address',
-                      onTap: () {
-                        // Handle item tap if needed
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
+                    child: ptpItems.isEmpty
+                        ? Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_empty.png',
+                                    width:50, height: 50),
+                                const Text(
+                                  "No PTP found",
+                                  style:
+                                      TextStyle(color: AppColors.titleLightColor),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: ptpItems.length,
+                            itemBuilder: (context, index) {
+                              var item = ptpItems[index];
+                              return FadeInLeft(
+                                delay: Duration(
+                                    milliseconds: min(index * 180, 1000)),
+                                child: CollectionItemCard(
+                                  name: item['customer_name'] ?? 'Unknown',
+                                  lan: item['lan'] ?? 'N/A',
+                                  address:
+                                      item['Communication'] ?? 'No address',
+                                  comment: item['comment'],
+                                  onTap: () {
+                                    // Handle item tap if needed
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                  ),
           ],
         ),
       ),
@@ -204,7 +216,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
     return GestureDetector(
       onTap: () => _selectDate(context),
       child: AbsorbPointer(
-        child:   InputFieldWidget(
+        child: InputFieldWidget(
           hintText: "Select Date",
           icon: Icons.calendar_month,
           textInputAction: TextInputAction.next,
@@ -216,16 +228,18 @@ class _DatePickerFieldState extends State<DatePickerField> {
 }
 
 class CollectionItemCard extends StatefulWidget {
-  final String title;
+  final String name;
   final String lan;
-  final String description;
+  final String address;
+  final String comment;
   final VoidCallback onTap;
 
   const CollectionItemCard({
     super.key,
-    required this.title,
+    required this.name,
     required this.lan,
-    required this.description,
+    required this.address,
+    required this.comment,
     required this.onTap,
   });
 
@@ -258,7 +272,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.title,
+                        widget.name,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -294,16 +308,22 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     ],
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
-                      Text(
+                      if (widget.comment.isNotEmpty) const SizedBox(height: 8),
+                      if (widget.comment.isNotEmpty) Text(
                         textAlign: TextAlign.start,
-                        widget.description,
+                        widget.comment,
+                        style: const TextStyle(
+                            fontSize: 13, color: AppColors.titleColor),
+                      ),
+                      if (widget.address.isNotEmpty) const SizedBox(height: 8),
+                      if (widget.address.isNotEmpty) Text(
+                        textAlign: TextAlign.start,
+                        widget.address,
                         style: const TextStyle(
                             fontSize: 12, color: AppColors.titleColor),
                       ),
-                      // const SizedBox(height: 8),
                     ],
                   ),
                 ],
@@ -327,9 +347,11 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange,(){
+                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange, () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>  AddPtpScreen(lan: '',)),
+                      MaterialPageRoute(
+                          builder: (context) => AddPtpScreen(
+                              lan: widget.lan, name: widget.name)),
                     );
                   }),
                   Container(
@@ -338,9 +360,12 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   _buildActionButton(
-                      Icons.account_balance_wallet, 'Collection', Colors.green,(){
+                      Icons.account_balance_wallet, 'Collection', Colors.green,
+                      () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => AddCollectionScreen(name: "", lan: "",)),
+                      MaterialPageRoute(
+                          builder: (context) => AddCollectionScreen(
+                              lan: widget.lan, name: widget.name)),
                     );
                   }),
                 ],
@@ -352,7 +377,8 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color,VoidCallback onTap) {
+  Widget _buildActionButton(
+      IconData icon, String label, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Row(

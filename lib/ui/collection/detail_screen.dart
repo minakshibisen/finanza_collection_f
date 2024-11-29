@@ -16,6 +16,8 @@ List<String> items = [
   'Pramod Kumar Matho',
   'Minakshi Bisen',
   'Minakshi Bisen',
+  'Minakshi Bisen',
+  'Minakshi Bisen',
 ];
 
 class _DetailScreenState extends State<DetailScreen> {
@@ -61,6 +63,8 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
+
 
 class InstallmentDetailCard extends StatelessWidget {
   const InstallmentDetailCard({super.key});
@@ -261,7 +265,11 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap:() {
+    setState(() {
+    isOpen = !isOpen;
+    });
+    },
       child: Card(
         color: Colors.white,
         elevation: 1,
@@ -274,7 +282,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildRow('Name', widget.title, AppColors.titleColor),
+              _buildRow('Name', widget.title, AppColors.titleColor,),
               const SizedBox(height: 4),
               _buildRow(
                   'Applicant Status', widget.status, AppColors.primaryColor),
@@ -282,7 +290,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
               _buildRow('Mobile', widget.mobile, AppColors.titleColor),
               if (isOpen)
                 Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: 5),
                   child: Text(
                     widget.address,
                     style: const TextStyle(
@@ -297,7 +305,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 
-  Widget _buildRow(String label, String value, Color valueColor) {
+  Widget _buildRow(String label, String value, Color valueColor,  ) {
     return Row(
       children: [
         Text(
@@ -305,7 +313,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
           style: const TextStyle(
             fontSize: 13,
             color: AppColors.titleColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
           ),
         ),
         Text(
@@ -313,7 +321,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
           style: TextStyle(
             fontSize: 13,
             color: valueColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

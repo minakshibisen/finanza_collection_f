@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           await SessionHelper.saveSessionData(SessionKeys.userId, userProfile['user_id']);
           await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['mobile']);
-          await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['email']);
+          await SessionHelper.saveSessionData(SessionKeys.email, userProfile['email']);
           await SessionHelper.saveSessionData(SessionKeys.gender, userProfile['gender']);
           await SessionHelper.saveSessionData(SessionKeys.companyId, userProfile['company_id']);
           await SessionHelper.saveSessionData(SessionKeys.branchList, response['branch_list'].toString());

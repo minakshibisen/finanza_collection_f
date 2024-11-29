@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
 import 'package:finanza_collection_f/ui/report/due_report_screen.dart';
 import 'package:finanza_collection_f/ui/misc/notification_screen.dart';
+import 'package:finanza_collection_f/ui/report/report_screen.dart';
 import 'package:finanza_collection_f/ui/unapproved/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -413,15 +414,15 @@ class DashboardCard extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => const UnapprovedScreen()),
                     );
                   }),
-          _buildActionButton(Icons.punch_clock, 'Attendance',
-              'Punch your daily attendance', () {}),
           _buildActionButton(Icons.document_scanner_sharp, 'Reports',
               'View Your Reports',
                   () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const DueReportScreen()),
+                      MaterialPageRoute(builder: (context) => const ReportScreen()),
                     );
                   }),
+          _buildActionButton(Icons.punch_clock, 'Attendance',
+              'Punch your daily attendance', () {}),
         ],
       ),
     );

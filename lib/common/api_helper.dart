@@ -41,4 +41,35 @@ class ApiHelper {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> getRequest({
+    required String url,
+  }) async {
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+      );
+      // print(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        print('Http Error:');
+        print(response.body);
+        return {
+          'error': true,
+          'message': 'HTTP Error: ${response.statusCode}',
+          'details': response.body,
+        };
+      }
+    } catch (e) {
+      print('Exception:');
+      print(e.toString());
+      return {
+        'error': true,
+        'message': 'An exception occurred',
+        'details': e.toString(),
+      };
+    }
+  }
 }

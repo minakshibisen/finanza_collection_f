@@ -1,13 +1,16 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/common/primary_button.dart';
+import 'package:finanza_collection_f/common/user_banner.dart';
 import 'package:finanza_collection_f/ui/ptp/ptp_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
+import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
 import '../../common/input_field.dart';
+import '../../common/success_dialog.dart';
 import '../../common/title_input_field.dart';
 import '../../common/titled_dropdown.dart';
 import '../../main.dart';
@@ -17,12 +20,14 @@ import '../../utils/session_helper.dart';
 import '../collection/detail_screen.dart';
 
 class AddPtpScreen extends StatefulWidget {
+  final String lan;
+  final String name;
+
   const AddPtpScreen({
     super.key,
     required this.lan,
+    required this.name,
   });
-
-  final String lan;
 
   @override
   State<AddPtpScreen> createState() => _AddPtpScreenState();
@@ -32,7 +37,9 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   bool isLoading = false;
+  bool isListLoading = false;
   List<String> visitLocationList = ["a", "b", "c", "d"];
+  List<dynamic> ptpItems = [];
 
   @override
   void dispose() {
@@ -43,28 +50,86 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
 
   Future<void> addPtpApi() async {
     if (isLoading) return;
+    closeKeyboard(context);
 
     if (_dateController.text.isEmpty) {
-    } else if (_descriptionController.text.isEmpty) {}
+      showSnackBar("Select Date", context);
+    } else if (_descriptionController.text.isEmpty) {
+      showSnackBar("Enter Note", context);
+    } else {
+      setState(() {
+        isLoading = true;
+      });
 
+      try {
+        var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+        var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
+
+        final response = await ApiHelper.postRequest(
+          url: BaseUrl + savePtpList,
+          body: {
+            'ptp_date': _dateController.text.toString(),
+            'user_id': userId.toString(),
+            'branch_id': branchId.toString(),
+            'longitude': '0.0',
+            'latitude': '0.0',
+            'narration': _descriptionController.text,
+            'lan': widget.lan,
+          },
+        );
+
+        if (!mounted) return;
+
+        setState(() {
+          isLoading = false;
+        });
+
+        if (response['error'] == true) {
+          CommonToast.showToast(
+            context: context,
+            title: "Request Failed",
+            description: response['message'] ?? "Unknown error occurred",
+          );
+          return;
+        } else {
+          var data = response;
+          if (data['status'] == '0' || (data['error'] != null)) {
+            CommonToast.showToast(
+                context: context,
+                title: "Request Failed",
+                description: data['error'].toString(),
+                duration: const Duration(seconds: 5));
+          } else {
+            showSuccessDialog(context, "PTP Added", duration: 2, onDismiss: () {
+              Navigator.of(context).pop();
+            });
+          }
+        }
+      } catch (e) {
+        if (!mounted) return;
+        CommonToast.showToast(
+          context: context,
+          title: "Error",
+          description: "An unexpected error occurred: ${e.toString()}",
+        );
+
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void ptpListApi() async {
     setState(() {
-      isLoading = true;
+      isListLoading = true;
     });
 
     try {
-      var userId = await SessionHelper.getSessionData(SessionKeys.userId);
-      var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
-
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + savePtpList,
+        url: BaseUrl + getPTPListByLan,
         body: {
-          'ptp_date': _dateController.text.toString(),
-          'user_id': userId.toString(),
-          'branch_id': branchId.toString(),
-          'longitude': '0.0',
-          'latitude': '0.0',
-          'narration': _descriptionController.text,
-          'lan': '',
+          'lan': widget.lan,
         },
       );
 
@@ -76,14 +141,32 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
           title: "Request Failed",
           description: response['message'] ?? "Unknown error occurred",
         );
+        setState(() {
+          ptpItems = [];
+          isListLoading = false;
+        });
         return;
       }
-      if (response['success'] == true) {
+      print(response);
+      final data = response;
+
+      if (data['status'] == '0') {
         CommonToast.showToast(
-            context: context,
-            title: 'Successfully Add PTP',
-            description: response['message']);
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        setState(() {
+          ptpItems = [];
+          isListLoading = false;
+        });
+        return;
       }
+
+      setState(() {
+        ptpItems = data['response'] ?? [];
+        isListLoading = false;
+      });
     } catch (e) {
       if (!mounted) return;
 
@@ -94,9 +177,16 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
       );
 
       setState(() {
-        isLoading = false;
+        ptpItems = [];
+        isListLoading = false;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ptpListApi();
   }
 
   @override
@@ -105,71 +195,81 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Add Promise To Pay", size: size),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const InputFieldTitle(titleText: "Next Visit Date/Time"),
-            DatePickerField(
-              dateController: _dateController,
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TitledDropdown(
-                items: visitLocationList,
-                title: "Visit Location",
-                onChanged: (String? value) {}),
-            const SizedBox(
-              height: 15,
-            ),
-            const InputFieldTitle(titleText: "Notes"),
-            InputFieldWidget(
-              hintText: "Enter Notes",
-              hasIcon: false,
-              lines: 5,
-              textInputAction: TextInputAction.done,
-              controller: _descriptionController,
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Text(
-              "Previous Promises",
-              style: TextStyle(
-                color: AppColors.titleColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             Expanded(
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return FadeInLeft(
-                    delay: Duration(milliseconds: index * 160),
-                    child: CollectionItemCard(
-                      title: items[index],
-                      lan: '101100156126',
-                      description: 'BHAEE BUNGLOW 50 LOKMANYA PAUD ROAD',
-                      onTap: () {
-                        // Handle item tap if needed
-                      },
-                    ),
-                  );
-                },
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      UserBanner(name: widget.name, lan: widget.lan),
+                      const InputFieldTitle(titleText: "Next Visit Date/Time"),
+                      DatePickerField(
+                        dateController: _dateController,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TitledDropdown(
+                          items: visitLocationList,
+                          title: "Visit Location",
+                          onChanged: (String? value) {}),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      const InputFieldTitle(titleText: "Notes"),
+                      InputFieldWidget(
+                        hintText: "Enter Notes",
+                        hasIcon: false,
+                        lines: 5,
+                        textInputAction: TextInputAction.done,
+                        controller: _descriptionController,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      const Text(
+                        "Previous Promises",
+                        style: TextStyle(
+                          color: AppColors.titleColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      isListLoading ? const SizedBox(height: 150, child: LoadingWidget(size: 30,),) : Column(
+                        children: ptpItems.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final item = entry.value;
+                          return FadeInLeft(
+                            delay: Duration(milliseconds: index * 160),
+                            child: PtpItemCard(
+                              name: item['pay_date'],
+                              comment: item['comment'],
+                              onTap: () {
+                                // Handle item tap if needed
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            FadeInUp(
-              duration: const Duration(milliseconds: 1200),
-              child: PrimaryButton(
-                onPressed: addPtpApi,
-                context: context,
-                text: "Save",
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FadeInUp(
+                duration: const Duration(milliseconds: 1200),
+                child: PrimaryButton(
+                  onPressed: addPtpApi,
+                  context: context,
+                  text: "Save",
+                  isLoading: isLoading,
+                ),
               ),
             ),
           ],
@@ -237,25 +337,23 @@ class _DatePickerFieldState extends State<DatePickerField> {
   }
 }
 
-class CollectionItemCard extends StatefulWidget {
-  final String title;
-  final String lan;
-  final String description;
+class PtpItemCard extends StatefulWidget {
+  final String name;
+  final String comment;
   final VoidCallback onTap;
 
-  const CollectionItemCard({
+  const PtpItemCard({
     super.key,
-    required this.title,
-    required this.lan,
-    required this.description,
+    required this.name,
+    required this.comment,
     required this.onTap,
   });
 
   @override
-  State<CollectionItemCard> createState() => _CollectionItemCardState();
+  State<PtpItemCard> createState() => _PtpItemCardState();
 }
 
-class _CollectionItemCardState extends State<CollectionItemCard> {
+class _PtpItemCardState extends State<PtpItemCard> {
   var isOpen = false;
 
   @override
@@ -264,7 +362,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       child: Card(
         color: Colors.white,
         elevation: 1,
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -280,7 +378,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.title,
+                        widget.name,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -290,38 +388,13 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'LAN: ',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.titleColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            widget.lan,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       const SizedBox(height: 8),
                       Text(
                         textAlign: TextAlign.start,
-                        widget.description,
+                        widget.comment,
                         style: const TextStyle(
                             fontSize: 12, color: AppColors.titleColor),
                       ),
