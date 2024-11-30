@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
 import 'package:finanza_collection_f/ui/report/due_report_screen.dart';
-import 'package:finanza_collection_f/ui/misc/notification_screen.dart';
 import 'package:finanza_collection_f/ui/report/report_screen.dart';
 import 'package:finanza_collection_f/ui/unapproved/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
@@ -29,9 +28,11 @@ class DashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.notifications_none,
                 color: AppColors.textOnPrimary),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const NotificationScreen()),
-              );
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+                return const DashboardScreen();
+              }), (r){
+                return false;
+              });
             },
           ),
         ],
@@ -259,7 +260,7 @@ class DashboardGrid extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "19",
+                    "₹ 5,483",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -319,7 +320,7 @@ class DashboardGrid extends StatelessWidget {
                   SizedBox(height: 5),
                   Flexible(
                       child: Text(
-                    "Total Unique Customer",
+                    "Number of Approved Receipt",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
@@ -349,7 +350,7 @@ class DashboardGrid extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "19",
+                    "₹ 5,483",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -359,7 +360,7 @@ class DashboardGrid extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   Flexible(
-                    child: Text("Number Of Approved Receipt",
+                    child: Text("Cash In Hand",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,

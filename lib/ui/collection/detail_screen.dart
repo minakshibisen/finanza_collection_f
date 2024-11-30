@@ -188,7 +188,7 @@ class AccountDetailCard extends StatelessWidget {
         children: details.asMap().entries.map((entry) {
           final index = entry.key;
           final item = entry.value;
-          return InstallmentDetailRow(
+          return AccountDetailRow(
             item: item,
             isLast: index == details.length - 1, // Set isLast for the last item
           );

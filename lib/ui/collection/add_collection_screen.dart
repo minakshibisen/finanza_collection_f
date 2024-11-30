@@ -28,12 +28,6 @@ class AddCollectionScreen extends StatefulWidget {
 }
 
 class _AddCollectionScreenState extends State<AddCollectionScreen> {
-  // List<String> receiptModeList = [
-  //   "Cash",
-  //   "Cheque",
-  //   "UPI",
-  //   "Internet Banking",
-  // ];
   List<String> bankList = [
     "Option 1",
     "Option 2",
@@ -41,19 +35,20 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
     "Option 4",
   ];
 
-
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _receiptController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
   String? selectedReceiptMode;
   var isLoading = false;
-  List<dynamic> receiptModeList = [];
+  Map<String, dynamic> receiptModeList = {};
+
   @override
   void dispose() {
     _dateController.dispose();
     _receiptController.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     super.initState();
@@ -81,7 +76,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
           description: response['message'] ?? "Unknown error occurred",
         );
         setState(() {
-          receiptModeList = [];
+          receiptModeList = {};
           isLoading = false;
         });
         return;
@@ -96,16 +91,23 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
           description: data['error']?.toString() ?? "No data found",
         );
         setState(() {
-          receiptModeList = [];
+          receiptModeList = {};
           isLoading = false;
         });
         return;
+      } else if(data['status'] == '1') {
+        final Map<String, String> dropdownMap = {
+          for (var item in data['response'])
+            item['key']: item['value']
+        };
+
+        setState(() {
+          receiptModeList = dropdownMap;
+          isLoading = false;
+        });
       }
 
-      setState(() {
-        receiptModeList = data['response'] ?? [];
-        isLoading = false;
-      });
+
     } catch (e) {
       if (!mounted) return;
 
@@ -116,7 +118,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
       );
 
       setState(() {
-        receiptModeList = [];
+        receiptModeList = {};
         isLoading = false;
       });
       if (selectedReceiptMode == null) {
@@ -128,9 +130,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
       }
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -150,12 +149,13 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                   lan: '101101100001',
                 ),
                 TitledDropdown(
-                    items: [''],
+                    items: receiptModeList.keys.toList(),
                     title: "Receipt Mode",
-                    onChanged:(value) {
+                    onChanged: (value) {
                       setState(() {
                         selectedReceiptMode = value;
-                      });}),
+                      });
+                    }),
                 const SizedBox(
                   height: 15,
                 ),
@@ -194,7 +194,11 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                 const SizedBox(
                   height: 15,
                 ),
-                PrimaryButton(onPressed: () {}, context: context, text: 'Add Receipt',)
+                PrimaryButton(
+                  onPressed: () {},
+                  context: context,
+                  text: 'Add Receipt',
+                )
               ],
             ),
           ),
@@ -218,9 +222,6 @@ class _CollectionTypeSelectState extends State<CollectionTypeSelect> {
     "Option 3",
     "Option 4",
   ];
-
-
-
 
   List<CollectionItem> items = [];
 
