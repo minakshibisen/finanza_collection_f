@@ -47,8 +47,10 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
     });
 
     try {
-      final response = await ApiHelper.getRequest(
-        url: BaseUrl + getCollectionStatusReport,
+      final response = await ApiHelper.postRequest(
+        url: BaseUrl + getCollectionStatusReport,   body: {
+        //'user_type':,
+      },
       );
 
       if (!mounted) return;
