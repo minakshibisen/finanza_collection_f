@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
 import '../../common/input_field.dart';
 import '../../common/title_input_field.dart';
 import '../../common/titled_dropdown.dart';
 
+import '../../main.dart';
 import '../../utils/colors.dart';
 import '../../common/default_app_bar.dart';
+import '../../utils/constants.dart';
 
 
 class CollectionReportScreen extends StatefulWidget {
@@ -18,18 +22,24 @@ class CollectionReportScreen extends StatefulWidget {
 class _CollectionReportScreenState extends State<CollectionReportScreen> {
 
   final TextEditingController _dateController = TextEditingController();
-  List<String> statusList = ["Pending", "Approved", "Rejected"];
-/*
+  String? selectStatusMode;
   var isLoading = false;
-  List<dynamic> collectionReportItems = [];
+  Map<String, dynamic> collectionStatusList = {};
+
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    dueReportListApi();
+    collectionStatusApi();
   }
 
-  void dueReportListApi() async {
+  void collectionStatusApi() async {
     if (isLoading) return;
 
     setState(() {
@@ -37,19 +47,10 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
     });
 
     try {
-      var userId = await SessionHelper.getSessionData(SessionKeys.userId);
-
-      final response = await ApiHelper.postRequest(
+      final response = await ApiHelper.getRequest(
         url: BaseUrl + getCollectionStatusReport,
-        body: {
-          'start_date': _dateController.toString(),
-          'end_date': _dateController.toString(),
-          'status': statusList.toString(),
-          'user_id': userId.toString(),
-        },
       );
 
-      // Check if the widget is still mounted before updating state
       if (!mounted) return;
 
       if (response['error'] == true) {
@@ -59,7 +60,7 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
           description: response['message'] ?? "Unknown error occurred",
         );
         setState(() {
-          collectionReportItems = [];
+          collectionStatusList = {};
           isLoading = false;
         });
         return;
@@ -74,16 +75,23 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
           description: data['error']?.toString() ?? "No data found",
         );
         setState(() {
-          collectionReportItems = [];
+          collectionStatusList = {};
           isLoading = false;
         });
         return;
+      } else if(data['status'] == '1') {
+        final Map<String, String> dropdownMap = {
+          for (var item in data['response'])
+            item['key']: item['value']
+        };
+
+        setState(() {
+          collectionStatusList = dropdownMap;
+          isLoading = false;
+        });
       }
 
-      setState(() {
-        collectionReportItems = data['response'] ?? [];
-        isLoading = false;
-      });
+
     } catch (e) {
       if (!mounted) return;
 
@@ -94,11 +102,18 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
       );
 
       setState(() {
-        collectionReportItems = [];
+        collectionStatusList = {};
         isLoading = false;
       });
+      if (selectStatusMode == null) {
+        CommonToast.showToast(
+          context: context,
+          title: "Validation Error",
+          description: "Please select receipt mode",
+        );
+      }
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,9 +142,16 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
               height: 15,
             ),
             TitledDropdown(
-                items: statusList,
+                items:collectionStatusList.keys.toList(),
                 title: "Status",
-                onChanged: (String? value) {}),
+                onChanged: (value) {
+                  setState(() {
+                    selectStatusMode = value;
+                  });
+                }),
+
+
+
           ],
         ),
       ),

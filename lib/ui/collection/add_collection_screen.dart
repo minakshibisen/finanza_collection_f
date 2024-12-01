@@ -28,19 +28,16 @@ class AddCollectionScreen extends StatefulWidget {
 }
 
 class _AddCollectionScreenState extends State<AddCollectionScreen> {
-  List<String> bankList = [
-    "Option 1",
-    "Option 2",
-    "Option 3",
-    "Option 4",
-  ];
+
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _receiptController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
   String? selectedReceiptMode;
+  String? selectedBankMode;
   var isLoading = false;
   Map<String, dynamic> receiptModeList = {};
+  Map<String, dynamic> bankList = {};
 
   @override
   void dispose() {
@@ -53,6 +50,83 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
   void initState() {
     super.initState();
     receiptModeApi();
+    bankListApi();
+  }
+
+  void bankListApi() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await ApiHelper.getRequest(
+        url: BaseUrl + getReceiptMode,
+      );
+
+      if (!mounted) return;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+        setState(() {
+          bankList = {};
+          isLoading = false;
+        });
+        return;
+      }
+      print(response);
+      final data = response;
+
+      if (data['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        setState(() {
+          bankList = {};
+          isLoading = false;
+        });
+        return;
+      } else if(data['status'] == '1') {
+        final Map<String, String> dropdownMap = {
+          for (var item in data['response'])
+            item['key']: item['value']
+        };
+
+        setState(() {
+          bankList = dropdownMap;
+          isLoading = false;
+        });
+      }
+
+
+    } catch (e) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+
+      setState(() {
+        bankList = {};
+        isLoading = false;
+      });
+      if (selectedBankMode == null) {
+        CommonToast.showToast(
+          context: context,
+          title: "Validation Error",
+          description: "Please select receipt mode",
+        );
+      }
+    }
   }
 
   void receiptModeApi() async {
@@ -160,9 +234,13 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                   height: 15,
                 ),
                 TitledDropdown(
-                    items: bankList,
+                    items: bankList.keys.toList(),
                     title: "Bank/Cash A/c",
-                    onChanged: (String? value) {}),
+                    onChanged: ( value) {
+                      setState(() {
+                        selectedBankMode = value;
+                      });
+                    }),
                 const SizedBox(
                   height: 15,
                 ),
