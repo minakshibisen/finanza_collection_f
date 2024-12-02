@@ -1,3 +1,5 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
@@ -20,7 +22,7 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final imageHeight = screenHeight * 0.2;
+    final imageHeight = screenHeight * 0.4;
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
@@ -47,28 +49,82 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
 
     return Scaffold(
       body: Container(
-        margin: const EdgeInsets.only(left: 25, right: 25),
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              SizedBox(
+              Container(
                 height: imageHeight,
-                width: screenWidth * 0.75,
-                child: Image.asset(
-                  'assets/images/login-head.png',
-                  width: double.infinity,
-                  fit: BoxFit.fill,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Image.asset(
-                  'assets/images/ic_logo.png',
-                  height: 50,
-                  width: 160,
-                  fit: BoxFit.cover,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/img_background.png'),
+                        fit: BoxFit.fill)),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: 30,
+                      width: 80,
+                      height: screenHeight * 0.22,
+                      child: FadeInUp(
+                          duration: const Duration(seconds: 1),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    opacity: 0.7,
+                                    image: AssetImage(
+                                        'assets/images/light-1.png'))),
+                          )),
+                    ),
+                    Positioned(
+                      left: 140,
+                      width: 80,
+                      height: screenHeight * 0.17,
+                      child: FadeInUp(
+                          duration: const Duration(milliseconds: 1200),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    opacity: 0.5,
+                                    image: AssetImage(
+                                        'assets/images/light-2.png'))),
+                          )),
+                    ),
+                    Positioned(
+                      right: 40,
+                      top: 40,
+                      width: 80,
+                      height: screenHeight * 0.17,
+                      child: FadeInUp(
+                          duration: const Duration(milliseconds: 1300),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    opacity: 0.5,
+                                    image:
+                                    AssetImage('assets/images/clock.png'))),
+                          )),
+                    ),
+                    Positioned(
+                      child: FadeInDownBig(
+                          duration: const Duration(milliseconds: 1000),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 50),
+                            child: Center(
+                              child: Padding(
+                                padding:
+                                EdgeInsets.only(top: screenHeight * 0.05),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/logo_finanza.png'))),
+                                ),
+                              ),
+                            ),
+                          )),
+                    )
+                  ],
                 ),
               ),
               const SizedBox(
@@ -119,9 +175,18 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const Text('Forgot Pin?',
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-                  textAlign: TextAlign.center),
+              InkWell(
+                onTap:  () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  );
+                },
+                child: const Text('Forgot Pin?',
+                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    textAlign: TextAlign.center),
+              ),
             ],
           ),
         ),
@@ -134,13 +199,13 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Enter Pin!")));
     } else {
-      var pref = await SharedPreferences.getInstance();
-      var existingPin = pref.getString('pin');
+      var existingPin = await SessionHelper.getPin();
+      print(existingPin);
       if (existingPin == pin) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => HomeScreen()), // Your Home Screen
+              builder: (context) => const HomeScreen()),
         );
       } else {
         ScaffoldMessenger.of(context)

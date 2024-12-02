@@ -18,55 +18,80 @@ class _ReportScreenState extends State<ReportScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Reports", size: size),
-    body:  Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildActionButton( 'Collection Report',
-                () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const CollectionReportScreen()),
-              );
-            }),
-        _buildActionButton( 'Due Report',
-                () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const DueReportScreen()),
-              );
-            }),
-        _buildActionButton( 'Attendance Report',
-                () {
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(builder: (context) => const ReportScreen()),
-            //   );
-             }),
-      ],
+    body: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      child: GridView(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 1,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 3.5,
+        ),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          _buildActionButton(
+              Icons.collections, 'Collection Report', 'Check your collection report',
+                  () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const CollectionReportScreen()),
+                );
+              }),
+          _buildActionButton(
+              Icons.report, 'Due Report', 'Check your due report',
+                  () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const DueReportScreen()),
+                );
+              }),
+          _buildActionButton(
+              Icons.repeat_one_on_sharp, 'Attendance Report', 'Check your attendance report',
+                  () {
+              /*  Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const CollectionScreen()),
+                );*/
+              }),
+        ],
+      ),
     ),
 
     );
 
   }
   Widget _buildActionButton(
-       String label, VoidCallback onTap,) {
+      IconData icon, String label, String subTitle, VoidCallback onTap,
+      {Color color = AppColors.primaryColor}) {
     return GestureDetector(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 50),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.lightGrey,
-              border: Border.all(color: Colors.grey.shade200)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: AppColors.lightGrey,
+            border: Border.all(color: Colors.grey.shade200)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  subTitle,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+            const SizedBox(width: 4),
+            Icon(icon, color: color, size: 30),
+          ],
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
@@ -26,10 +27,12 @@ class PTPScreen extends StatefulWidget {
 class PTPScreenState extends State<PTPScreen> {
   var isLoading = false;
   List<dynamic> ptpItems = [];
+  final TextEditingController _dateController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _dateController.text = DateFormat('dd-MM-yyyy').format(DateTime.timestamp());
     _ptpListApi();
   }
 
@@ -49,6 +52,7 @@ class PTPScreenState extends State<PTPScreen> {
         body: {
           'user_id': userId.toString(),
           'branch_id': branchId.toString(),
+          'date': _dateController.text.toString(),
         },
       );
 
@@ -114,12 +118,12 @@ class PTPScreenState extends State<PTPScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Promises For ",
                     style: TextStyle(
                       color: AppColors.titleColor,
@@ -127,9 +131,9 @@ class PTPScreenState extends State<PTPScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 15),
-                  DatePickerField(),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 15),
+                  DatePickerField(controller: _dateController,),
+                  const SizedBox(height: 5),
                 ],
               ),
             ),
@@ -164,6 +168,8 @@ class PTPScreenState extends State<PTPScreen> {
                                   lan: item['lan'] ?? 'N/A',
                                   address:
                                       item['Communication'] ?? 'No address',
+                                  alternateAddress:
+                                      item['Permanent'] ?? 'No address',
                                   comment: item['comment'],
                                   onTap: () {
                                     // Handle item tap if needed
@@ -181,18 +187,18 @@ class PTPScreenState extends State<PTPScreen> {
 }
 
 class DatePickerField extends StatefulWidget {
-  const DatePickerField({super.key});
+  final TextEditingController controller;
+  const DatePickerField({super.key, required this.controller});
 
   @override
   _DatePickerFieldState createState() => _DatePickerFieldState();
 }
 
 class _DatePickerFieldState extends State<DatePickerField> {
-  final TextEditingController _dateController = TextEditingController();
 
   @override
   void dispose() {
-    _dateController.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 
@@ -206,7 +212,8 @@ class _DatePickerFieldState extends State<DatePickerField> {
 
     if (pickedDate != null) {
       setState(() {
-        _dateController.text = "${pickedDate.toLocal()}".split(' ')[0];
+        String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+        widget.controller.text = formattedDate;
       });
     }
   }
@@ -220,7 +227,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
           hintText: "Select Date",
           icon: Icons.calendar_month,
           textInputAction: TextInputAction.next,
-          controller: _dateController,
+          controller: widget.controller,
         ),
       ),
     );
@@ -231,6 +238,7 @@ class CollectionItemCard extends StatefulWidget {
   final String name;
   final String lan;
   final String address;
+  final String alternateAddress;
   final String comment;
   final VoidCallback onTap;
 
@@ -239,6 +247,7 @@ class CollectionItemCard extends StatefulWidget {
     required this.name,
     required this.lan,
     required this.address,
+    required this.alternateAddress,
     required this.comment,
     required this.onTap,
   });
@@ -256,7 +265,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       child: Card(
         color: Colors.white,
         elevation: 1,
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -348,10 +357,14 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
                   _buildActionButton(Icons.handshake, 'PTP', Colors.orange, () {
+                    List<String> list = [];
+                    list.add(widget.address);
+                    list.add(widget.alternateAddress);
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => AddPtpScreen(
-                              lan: widget.lan, name: widget.name)),
+                              lan: widget.lan, name: widget.name, address: list,)),
                     );
                   }),
                   Container(
@@ -365,7 +378,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => AddCollectionScreen(
-                              lan: widget.lan, name: widget.name)),
+                              lan: widget.lan, name: widget.name,appId: '',fileId: '',)),
                     );
                   }),
                 ],

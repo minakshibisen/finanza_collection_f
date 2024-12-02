@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/common/success_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/api_helper.dart';
@@ -95,7 +96,6 @@ class _UnapprovedScreenState extends State<UnapprovedScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -125,7 +125,7 @@ class _UnapprovedScreenState extends State<UnapprovedScreen> {
                       itemBuilder: (context, index) {
                         var item = unApprovedItems[index];
                         return FadeInLeft(
-                          delay: Duration(milliseconds: index * 180),
+                          delay: Duration(milliseconds: index + 180),
                           child: Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 5.0),
@@ -134,6 +134,9 @@ class _UnapprovedScreenState extends State<UnapprovedScreen> {
                               amount: item['amount'],
                               date: item['updated_on'],
                               description: item['narration'],
+                              receiptId: item['receipt_id'],
+                              lan: item['lan'],
+                              unApprovedListApi: unApprovedListApi,
                               onTap: () {},
                             ),
                           ),
@@ -148,8 +151,11 @@ class CollectionItemCard extends StatefulWidget {
   final String name;
   final String amount;
   final String description;
+  final String receiptId;
+  final String lan;
   final String date;
   final VoidCallback onTap;
+  final VoidCallback unApprovedListApi;
 
   const CollectionItemCard({
     super.key,
@@ -158,6 +164,9 @@ class CollectionItemCard extends StatefulWidget {
     required this.date,
     required this.description,
     required this.onTap,
+    required this.receiptId,
+    required this.lan,
+    required this.unApprovedListApi,
   });
 
   @override
@@ -166,6 +175,54 @@ class CollectionItemCard extends StatefulWidget {
 
 class _CollectionItemCardState extends State<CollectionItemCard> {
   var isOpen = false;
+
+  void deleteReceipt(receiptId) async {
+    try {
+      var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+
+      final response = await ApiHelper.postRequest(
+        url: BaseUrl + deleteCollection,
+        body: {
+          'receipt_id': receiptId,
+        },
+      );
+
+      if (!mounted) return;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+
+        return;
+      }
+      print(response);
+      final data = response;
+
+      if (data['status'] == '0') {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        return;
+      } else if (data['status'] == '1') {
+        showSuccessDialog(context, "Receipt Deleted!", onDismiss: () {
+          widget.unApprovedListApi();
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +300,8 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                   Text(
-                     'Added On ${widget.date}',
+                  Text(
+                    'Added On ${widget.date}',
                     style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textColor,
@@ -261,20 +318,63 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 15,
-          color: Colors.red,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-        ),
-      ],
+  Widget _buildActionButton(
+    IconData icon,
+    String label,
+    Color color,
+  ) {
+    return InkWell(
+      onTap: () {
+        openDeleteDialog();
+      },
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 15,
+            color: Colors.red,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void openDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Receipt?'),
+          content: Text(
+              'Are you sure you want to delete Receipt: ${widget.receiptId} for ${widget.name}(Lan:${widget.lan})?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: AppColors.titleLightColor),
+              ),
+            ),
+            ElevatedButton(
+              style: const ButtonStyle(
+                  textStyle:
+                      WidgetStatePropertyAll(TextStyle(color: AppColors.red))),
+              onPressed: () {
+                deleteReceipt(widget.receiptId);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/common/common_toast.dart';
 import 'package:finanza_collection_f/common/primary_button.dart';
 import 'package:finanza_collection_f/main.dart';
+import 'package:finanza_collection_f/ui/auth/pin/set_pin_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/utils/common_util.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if(data['status'] == '0') {
           CommonToast.showToast(context: context, title: "Login Failed", description: data['response']['error'].toString(), duration: const Duration(seconds: 10));
         } else {
+          print(data);
           var response = data['response'];
           var userdata = response['userdata'];
           var userProfile = response['userprofile'];
@@ -79,14 +81,22 @@ class _LoginScreenState extends State<LoginScreen> {
           await SessionHelper.saveSessionData(SessionKeys.gender, userProfile['gender']);
           await SessionHelper.saveSessionData(SessionKeys.companyId, userProfile['company_id']);
           await SessionHelper.saveSessionData(SessionKeys.branchList, response['branch_list'].toString());
+          await SessionHelper.saveSessionData(SessionKeys.userImage, response['userphoto']['file_content']);
+          await SessionHelper.saveSessionData(SessionKeys.ledgerId, userdata?['ledger_id']);
+          await SessionHelper.saveSessionData(SessionKeys.permissionGroup, userdata?['permission_group']);
+          await SessionHelper.saveSessionData(SessionKeys.userType, userdata?['user_type']);
 
           if (!mounted) return;
 
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
-            return const HomeScreen();
-          }), (r){
-            return false;
-          });
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SetPinScreen()),
+          );
+
+          // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+          //   return const HomeScreen();
+          // }), (r){
+          //   return false;
+          // });
         }
       }
     }

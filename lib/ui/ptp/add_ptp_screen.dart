@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:finanza_collection_f/common/primary_button.dart';
 import 'package:finanza_collection_f/common/user_banner.dart';
 import 'package:finanza_collection_f/ui/ptp/ptp_screen.dart';
@@ -6,6 +7,7 @@ import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
@@ -22,11 +24,13 @@ import '../collection/detail_screen.dart';
 class AddPtpScreen extends StatefulWidget {
   final String lan;
   final String name;
+  final List<String> address;
 
   const AddPtpScreen({
     super.key,
     required this.lan,
     required this.name,
+    required this.address,
   });
 
   @override
@@ -35,10 +39,10 @@ class AddPtpScreen extends StatefulWidget {
 
 class _AddPtpScreenState extends State<AddPtpScreen> {
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   bool isLoading = false;
   bool isListLoading = false;
-  List<String> visitLocationList = ["a", "b", "c", "d"];
   List<dynamic> ptpItems = [];
 
   @override
@@ -69,6 +73,7 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
           url: BaseUrl + savePtpList,
           body: {
             'ptp_date': _dateController.text.toString(),
+            'ptp_time': _timeController.text.toString(),
             'user_id': userId.toString(),
             'branch_id': branchId.toString(),
             'longitude': '0.0',
@@ -206,20 +211,47 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       UserBanner(name: widget.name, lan: widget.lan),
-                      const InputFieldTitle(titleText: "Next Visit Date/Time"),
+                      const InputFieldTitle(titleText: "Next Visit Date"),
                       DatePickerField(
                         dateController: _dateController,
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-                      TitledDropdown(
-                          items: visitLocationList,
-                          title: "Visit Location",
-                          onChanged: (String? value) {}),
+                      const InputFieldTitle(titleText: "Next Visit Time"),
+                      DatePickerField(
+                          dateController: _timeController, time: true),
                       const SizedBox(
                         height: 15,
                       ),
+                      /*Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const InputFieldTitle(titleText: "Visit Location"),
+                          CustomDropdown<String>(
+                            decoration: const CustomDropdownDecoration(
+                                expandedFillColor: AppColors.lightGrey,
+                                closedFillColor: AppColors.lightGrey,
+                                listItemStyle:
+                                    TextStyle(fontSize: 13),
+                                headerStyle:
+                                    TextStyle(fontSize: 14),
+                                prefixIcon: Icon(Icons.receipt,
+                                    color: AppColors.primaryColor,
+                                    size: 18),
+                                hintStyle:
+                                    TextStyle(fontSize: 12)),
+                            hintText: 'Select Visit Location',
+                            closedHeaderPadding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 15),
+                            items: widget.address,
+                            onChanged: (value) => {},
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),*/
                       const InputFieldTitle(titleText: "Notes"),
                       InputFieldWidget(
                         hintText: "Enter Notes",
@@ -239,22 +271,29 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      isListLoading ? const SizedBox(height: 150, child: LoadingWidget(size: 30,),) : Column(
-                        children: ptpItems.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final item = entry.value;
-                          return FadeInLeft(
-                            delay: Duration(milliseconds: index * 160),
-                            child: PtpItemCard(
-                              name: item['pay_date'],
-                              comment: item['comment'],
-                              onTap: () {
-                                // Handle item tap if needed
-                              },
+                      isListLoading
+                          ? const SizedBox(
+                              height: 150,
+                              child: LoadingWidget(
+                                size: 30,
+                              ),
+                            )
+                          : Column(
+                              children: ptpItems.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final item = entry.value;
+                                return FadeInLeft(
+                                  delay: Duration(milliseconds: index * 160),
+                                  child: PtpItemCard(
+                                    name: item['pay_date'],
+                                    comment: item['comment'],
+                                    onTap: () {
+                                      // Handle item tap if needed
+                                    },
+                                  ),
+                                );
+                              }).toList(),
                             ),
-                          );
-                        }).toList(),
-                      ),
                     ],
                   ),
                 ),
@@ -281,8 +320,10 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
 
 class DatePickerField extends StatefulWidget {
   final TextEditingController dateController;
+  final bool time;
 
-  const DatePickerField({super.key, required this.dateController});
+  const DatePickerField(
+      {super.key, required this.dateController, this.time = false});
 
   @override
   _DatePickerFieldState createState() => _DatePickerFieldState();
@@ -296,26 +337,39 @@ class _DatePickerFieldState extends State<DatePickerField> {
   }
 
   Future<void> _selectDateTime(BuildContext context) async {
-    // Pick a date
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+    if (!widget.time) {
+      DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
 
-    if (pickedDate != null) {
-      // Pick a time
+      if (pickedDate != null) {
+        setState(() {
+          String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+          widget.dateController.text = formattedDate;
+        });
+      }
+    }
+
+    if (widget.time) {
+      if (!context.mounted) return;
+
       TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
+        builder: (BuildContext context, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child!,
+          );
+        },
       );
-
       if (pickedTime != null) {
         setState(() {
-          final formattedDate = "${pickedDate.toLocal()}".split(' ')[0];
           final formattedTime = pickedTime.format(context);
-          widget.dateController.text = "$formattedDate $formattedTime";
+          widget.dateController.text = formattedTime;
         });
       }
     }

@@ -1,15 +1,33 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
-import 'package:finanza_collection_f/ui/report/due_report_screen.dart';
+import 'package:finanza_collection_f/ui/home/dashboard_location_bar.dart';
 import 'package:finanza_collection_f/ui/report/report_screen.dart';
 import 'package:finanza_collection_f/ui/unapproved/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
+import 'package:finanza_collection_f/utils/common_util.dart';
+import 'package:finanza_collection_f/utils/constants.dart';
+import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
-
+import '../../common/api_helper.dart';
+import '../../common/common_toast.dart';
+import '../../main.dart';
 import '../ptp/ptp_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  var userName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +46,10 @@ class DashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.notifications_none,
                 color: AppColors.textOnPrimary),
             onPressed: () {
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
                 return const DashboardScreen();
-              }), (r){
+              }), (r) {
                 return false;
               });
             },
@@ -42,7 +61,9 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             dashboardGreeting(),
-            FadeInLeft(duration: const Duration(milliseconds: duration),child: const DashboardLocationBar()),
+            FadeInLeft(
+                duration: const Duration(milliseconds: duration),
+                child: const DashboardLocationBar()),
             const SizedBox(height: 10),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -64,7 +85,9 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            FadeInLeft(duration: const Duration(milliseconds: duration),child: const DashboardGrid()),
+            FadeInLeft(
+                duration: const Duration(milliseconds: duration),
+                child: const DashboardGrid()),
             const SizedBox(height: 30),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -94,21 +117,21 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget dashboardGreeting() {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(18, 18, 18, 5),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Hello, Provider Demo",
-            style: TextStyle(
+            "Hello, $userName",
+            style: const TextStyle(
               color: AppColors.titleColor,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 6),
-          Text(
+          const SizedBox(height: 6),
+          const Text(
             "Welcome back!",
             style: TextStyle(color: AppColors.textColor, fontSize: 16),
           ),
@@ -116,81 +139,102 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class DashboardLocationBar extends StatelessWidget {
-  const DashboardLocationBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
-        decoration: BoxDecoration(
-          color: AppColors.lightGrey,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: [
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Vijay Nagar, Indore",
-                    style: TextStyle(
-                      color: AppColors.titleColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Text(
-                        "Nearby Collections: ",
-                        style: TextStyle(
-                          color: AppColors.textColor,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        "12",
-                        style: TextStyle(
-                          color: AppColors.titleColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 40.0,
-              height: 40.0,
-              padding: const EdgeInsets.all(5),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryColor,
-              ),
-              child: const Icon(
-                Icons.location_on_outlined,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  void getUser() async {
+    var name = await SessionHelper.getSessionData(SessionKeys.username);
+    setState(() {
+      userName = name.toString();
+    });
   }
 }
 
-class DashboardGrid extends StatelessWidget {
+class DashboardGrid extends StatefulWidget {
   const DashboardGrid({super.key});
+
+  @override
+  State<DashboardGrid> createState() => _DashboardGridState();
+}
+
+class _DashboardGridState extends State<DashboardGrid> {
+  bool isLoading = false;
+
+  var noOfReceipt = '0';
+  var totalCollectionAmount = '0';
+  var numberOfApprovedReceipt = '0';
+  var cashInHand = '0';
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    try {
+      var userId = await SessionHelper.getUserId();
+
+      final response = await ApiHelper.postRequest(
+          url: BaseUrl + getDashboardData,
+          body: {
+            "user_id": userId
+          }
+      );
+      print(response);
+
+      if (!mounted) return;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+      final data = response;
+
+      if (data['status'] == 0) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      } else if (data['status'] == 1) {
+        var response = data['response'];
+        setState(() {
+          noOfReceipt = response['no_of_receipt']?.toString() ?? "0";
+          totalCollectionAmount = response['total_collection_amount']?.toString() ?? "0";
+          cashInHand = response['cash_in_hand']?.toString() ?? "0";
+          numberOfApprovedReceipt = response['no_of_approved_receipt']?.toString() ?? "0";
+        });
+
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -214,20 +258,20 @@ class DashboardGrid extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "19",
+                    noOfReceipt,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textOnPrimary,
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Flexible(
+                  const SizedBox(height: 5),
+                  const Flexible(
                     child: Text(
                       "Number Of Receipt",
                       textAlign: TextAlign.center,
@@ -256,20 +300,20 @@ class DashboardGrid extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "₹ 5,483",
+                    "₹ ${getFancyNumber(double.parse(totalCollectionAmount))}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textOnPrimary,
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Flexible(
+                  const SizedBox(height: 5),
+                  const Flexible(
                       child: Text(
                     "Total Collection Amount",
                     textAlign: TextAlign.center,
@@ -305,20 +349,20 @@ class DashboardGrid extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "19",
+                    numberOfApprovedReceipt,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textOnPrimary,
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Flexible(
+                  const SizedBox(height: 5),
+                  const Flexible(
                       child: Text(
                     "Number of Approved Receipt",
                     textAlign: TextAlign.center,
@@ -346,20 +390,20 @@ class DashboardGrid extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "₹ 5,483",
+                    "₹ ${getFancyNumber(double.parse(cashInHand))}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textOnPrimary,
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Flexible(
+                  const SizedBox(height: 5),
+                  const Flexible(
                     child: Text("Cash In Hand",
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -409,19 +453,17 @@ class DashboardCard extends StatelessWidget {
             );
           }),
           _buildActionButton(Icons.cancel_presentation_outlined, 'Unapproved',
-              'Check for unapproved collections',
-                  () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const UnapprovedScreen()),
-                    );
-                  }),
-          _buildActionButton(Icons.document_scanner_sharp, 'Reports',
-              'View Your Reports',
-                  () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const ReportScreen()),
-                    );
-                  }),
+              'Check for unapproved collections', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const UnapprovedScreen()),
+            );
+          }),
+          _buildActionButton(
+              Icons.document_scanner_sharp, 'Reports', 'View Your Reports', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const ReportScreen()),
+            );
+          }),
           _buildActionButton(Icons.punch_clock, 'Attendance',
               'Punch your daily attendance', () {}),
         ],

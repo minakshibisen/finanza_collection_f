@@ -68,6 +68,7 @@ class CollectionScreenState extends State<CollectionScreen> {
       }
 
       final data = response;
+      print(data);
 
       if (data['status'] == '0') {
         CommonToast.showToast(
@@ -147,7 +148,7 @@ class CollectionScreenState extends State<CollectionScreen> {
                           itemBuilder: (context, index) {
                             var item = collectionItems[index];
                             return FadeInLeft(
-                              delay: Duration(milliseconds: (index + 10) +  100),
+                              delay: Duration(milliseconds: (index + 10) + 100),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 5.0),
@@ -158,7 +159,12 @@ class CollectionScreenState extends State<CollectionScreen> {
                                   lan: item['lan'] ?? 'N/A',
                                   address:
                                       item['Communication'] ?? 'No address',
+                                  alternateAddress:
+                                      item['Permanent'] ?? 'No address',
                                   dueDays: item['dpd']?.toString() ?? '0',
+                                  appId: item['app_id']?.toString() ?? '',
+                                  fileId: item['file_id']?.toString() ?? '',
+                                  leadId: item['lead_id']?.toString() ?? '',
                                   onTap: () {
                                     // Handle item tap if needed
                                   },
@@ -193,7 +199,11 @@ class CollectionItemCard extends StatefulWidget {
   final String amount;
   final String lan;
   final String address;
+  final String alternateAddress;
   final String dueDays;
+  final String appId;
+  final String leadId;
+  final String fileId;
   final VoidCallback onTap;
 
   const CollectionItemCard({
@@ -204,6 +214,9 @@ class CollectionItemCard extends StatefulWidget {
     required this.address,
     required this.dueDays,
     required this.onTap,
+    required this.appId,
+    required this.fileId,
+    required this.alternateAddress, required this.leadId,
   });
 
   @override
@@ -308,7 +321,11 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const DetailScreen()),
+                                    builder: (context) => DetailScreen(
+                                      fileId: widget.fileId,
+                                      appId: widget.appId,
+                                      leadId: widget.leadId,
+                                    )),
                               );
                             },
                             child: Container(
@@ -349,17 +366,25 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                  _buildActionButton(
-                      Icons.location_on_outlined, 'Location', Colors.orange, () {}),
+                  _buildActionButton(Icons.location_on_outlined, 'Location',
+                      Colors.orange, () {}),
                   Container(
                     color: AppColors.textColor,
                     width: .5,
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
-                  _buildActionButton(Icons.handshake_outlined, 'PTP', Colors.orange, () {
+                  _buildActionButton(
+                      Icons.handshake_outlined, 'PTP', Colors.orange, () {
+                    List<String> list = [];
+                    list.add(widget.address);
+                    list.add(widget.alternateAddress);
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) =>  AddPtpScreen(lan:widget.lan, name: widget.title,)),
+                          builder: (context) => AddPtpScreen(
+                                lan: widget.lan,
+                                name: widget.title,
+                                address: list,
+                              )),
                     );
                   }),
                   Container(
@@ -367,12 +392,16 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     width: .5,
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
-                  _buildActionButton(
-                      Icons.account_balance_wallet_outlined, 'Collection', Colors.green,
-                      () {
+                  _buildActionButton(Icons.account_balance_wallet_outlined,
+                      'Collection', Colors.green, () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => AddCollectionScreen(lan: widget.lan, name: widget.title,)),
+                          builder: (context) => AddCollectionScreen(
+                                lan: widget.lan,
+                                name: widget.title,
+                                appId: widget.appId,
+                                fileId: widget.fileId,
+                              )),
                     );
                   }),
                 ],
@@ -405,6 +434,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
 class RoundedSearchInput extends StatelessWidget {
   final TextEditingController textController;
   final String hintText;
+
 
   const RoundedSearchInput(
       {required this.textController, required this.hintText, super.key});

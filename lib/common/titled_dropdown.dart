@@ -1,6 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:finanza_collection_f/common/title_input_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
@@ -40,6 +39,7 @@ class _TitledDropdownState extends State<TitledDropdown> {
           closedHeaderPadding:  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15),
           items: widget.items,
           onChanged: widget.onChanged,
+
         ),
       ],
     );

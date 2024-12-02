@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       Navigator.of(context).pop();
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const CheckPinScreen()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } else {
       final res = response;
@@ -106,8 +106,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
-    // List of tiles with their respective details
     final List<Map<String, dynamic>> listItems = [
       {
         "title": "Change Language",
@@ -135,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         "icon": Icons.password_rounded,
         "onTap": () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
+            MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
           );
         },
       },
@@ -298,30 +296,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 50,
               backgroundImage: AssetImage('assets/images/ic_image.png'),
             ),
             Column(
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   userName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.mail, color: Colors.white, size: 16),
-                    SizedBox(width: 5),
+                    const Icon(Icons.mail, color: Colors.white, size: 16),
+                    const SizedBox(width: 5),
                     Text(
                       email,
-                      style: TextStyle(color: Colors.white, fontSize: 13),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
                     ),
                   ],
                 ),
@@ -491,12 +489,12 @@ void _showLogoutDialog(BuildContext context) {
           ),
           ElevatedButton(
             onPressed: () async {
-              await SessionHelper.clearAllSessionData();
               if (!context.mounted) return;
-              Navigator.of(context).pop();
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const CheckPinScreen()),
-              );
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+                return const LoginScreen();
+              }), (r){
+                return false;
+              });
             },
             child: const Text('Logout'),
           ),

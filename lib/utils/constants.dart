@@ -7,11 +7,20 @@ const savePtpList = "savePtpList";
 const getDueReport = "getDueReport";
 const profileDetails = "ProfileDetails";
 const getUnApprovedCollection = "getUnApprovedCollection";
+const deleteCollection = "deleteCollection";
+
+const getCustomerDetail = "getCustomerDetail";
 
 const getReceiptMode = "getReceiptMode";
-const getBranchList = "getBranchList";
-const deleteCollection = "deleteCollection";
+const getAccountCollection = "getAccountCollection";
+const getCollectionsType = "getCollectionsType";
+
 const getCollectionStatusReport = "getCollectionStatusReport";
+const getCollectionStatus = "getCollectionStatus";
+const collectionSubmit = "collectionSubmit";
+
+const getDashboardData = "getDashboardData";
+const listCoApplicant = "listCoApplicant";
 
 
 class SessionKeys {
@@ -25,5 +34,12 @@ class SessionKeys {
   static const String companyId = "KEY_COMPANY_ID";
   static const String designation = "KEY_DESIGNATION";
   static const String employeeCode = "KEY_EMPLOYEE_CODE";
+
+  static const String userImage = "KEY_USER_IMAGE";
+  static const String ledgerId = "KEY_LEDGER_ID";
+  static const String permissionGroup = "KEY_PERMISSION_GROUP";
+  static const String userType = "KEY_USER_TYPE";
+
+  static const String mPin = "KEY_M_PIN";
 
 }

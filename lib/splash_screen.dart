@@ -1,4 +1,5 @@
 import 'package:finanza_collection_f/ui/auth/login_screen.dart';
+import 'package:finanza_collection_f/ui/auth/pin/check_pin_screen.dart';
 import 'package:finanza_collection_f/ui/home/home_screen.dart';
 import 'package:finanza_collection_f/utils/constants.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
@@ -25,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (userId != null) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const CheckPinScreen()),
       );
     } else {
       await Future.delayed(const Duration(seconds: 1), () {});
