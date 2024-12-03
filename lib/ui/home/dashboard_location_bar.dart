@@ -1,6 +1,9 @@
+import 'package:finanza_collection_f/common/common_toast.dart';
+import 'package:finanza_collection_f/ui/maps/map_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../utils/colors.dart';
 
@@ -13,7 +16,10 @@ class DashboardLocationBar extends StatefulWidget {
 
 class _DashboardLocationBarState extends State<DashboardLocationBar> {
   String _currentLocation = "Fetching location...";
+  bool locAvail = false;
   int _nearbyCollections = 0;
+  double lat = 0;
+  double lang = 0;
 
   @override
   void initState() {
@@ -25,7 +31,6 @@ class _DashboardLocationBarState extends State<DashboardLocationBar> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Check location services
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       setState(() {
@@ -34,7 +39,6 @@ class _DashboardLocationBarState extends State<DashboardLocationBar> {
       return;
     }
 
-    // Check permissions
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -53,24 +57,22 @@ class _DashboardLocationBarState extends State<DashboardLocationBar> {
       return;
     }
 
-    // Get current position
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high
-      );
+          desiredAccuracy: LocationAccuracy.high);
 
-      // Get human-readable address
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude
-      );
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         setState(() {
+          lat = position.latitude;
+          lang = position.longitude;
+          locAvail = true;
+
           _currentLocation = "${place.subLocality}, ${place.locality}";
-          // You might want to implement logic to count nearby collections
-          _nearbyCollections = 0; // Placeholder
+          _nearbyCollections = 0;
         });
       }
     } catch (e) {
@@ -128,17 +130,36 @@ class _DashboardLocationBarState extends State<DashboardLocationBar> {
                 ],
               ),
             ),
-            Container(
-              width: 40.0,
-              height: 40.0,
-              padding: const EdgeInsets.all(5),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryColor,
-              ),
-              child: const Icon(
-                Icons.location_on_outlined,
-                color: Colors.white,
+            InkWell(
+              onTap: () {
+                if (locAvail) {
+                  LatLng startLoc = LatLng(lat, lang);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MapScreen(
+                      title: "Nearby Collection",
+                      start: startLoc,
+                    ),
+                  ));
+                } else {
+                  CommonToast.showToast(
+                      context: context,
+                      title: "Location Unavailable!",
+                      description:
+                          "User's Location isn't available. Try again Later");
+                }
+              },
+              child: Container(
+                width: 40.0,
+                height: 40.0,
+                padding: const EdgeInsets.all(5),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primaryColor,
+                ),
+                child: const Icon(
+                  Icons.location_on_outlined,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],

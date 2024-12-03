@@ -1,13 +1,16 @@
 import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
+import 'package:finanza_collection_f/ui/maps/map_screen.dart';
 import 'package:finanza_collection_f/ui/ptp/add_ptp_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/common/default_app_bar.dart';
+import 'package:finanza_collection_f/utils/common_util.dart';
 import 'package:finanza_collection_f/utils/constants.dart';
 import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
@@ -164,6 +167,8 @@ class CollectionScreenState extends State<CollectionScreen> {
                                   appId: item['app_id']?.toString() ?? '',
                                   fileId: item['file_id']?.toString() ?? '',
                                   leadId: item['lead_id']?.toString() ?? '',
+                                  latitude: item['latitude'],
+                                  longitude: item['longitude'],
                                   onTap: () {
                                     // Handle item tap if needed
                                   },
@@ -203,6 +208,8 @@ class CollectionItemCard extends StatefulWidget {
   final String appId;
   final String leadId;
   final String fileId;
+  final String? latitude;
+  final String? longitude;
   final VoidCallback onTap;
 
   const CollectionItemCard({
@@ -217,6 +224,8 @@ class CollectionItemCard extends StatefulWidget {
     required this.fileId,
     required this.alternateAddress,
     required this.leadId,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -367,8 +376,37 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                  _buildActionButton(Icons.location_on_outlined, 'Location',
-                      Colors.orange, () {}),
+                  _buildActionButton(
+                      Icons.location_on_outlined, 'Location', Colors.orange,
+                      () {
+                    double longitude = 0;
+                    double latitude = 0;
+
+                    if (widget.latitude != null &&
+                        widget.latitude!.isNotEmpty) {
+                      latitude = double.parse(widget.latitude!);
+                    } else {
+                      showSnackBar("Address Not Mapped!", context);
+                      return;
+                    }
+                    if (widget.longitude != null &&
+                        widget.longitude!.isNotEmpty) {
+                      longitude = double.parse(widget.longitude!);
+                    } else {
+                      showSnackBar("Address Not Mapped!", context);
+                      return;
+                    }
+
+                    LatLng destination = LatLng(latitude, longitude);
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => MapScreen(
+                        title: "Navigate to User",
+                        destination: destination,
+                        customerAddress: widget.address,
+                        customerName: widget.title,
+                      ),
+                    ));
+                  }),
                   Container(
                     color: AppColors.textColor,
                     width: .5,

@@ -80,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           branch = data['branch_id'].toString();
           email = data['email'].toString();
           designation = data['designation'].toString();
+          empCode = data['emp_code'].toString();
         });
 
         await SessionHelper.saveSessionData(SessionKeys.mobile, data['mobile']);
@@ -91,8 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await SessionHelper.saveSessionData(
             SessionKeys.designation, data['designation']);
         await SessionHelper.saveSessionData(
-            SessionKeys.employeeCode, data['employee_code']);
-
+            SessionKeys.employeeCode, data['emp_code']);
       }
     }
   }
@@ -133,7 +133,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         "icon": Icons.password_rounded,
         "onTap": () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+            MaterialPageRoute(
+                builder: (context) => const ChangePasswordScreen()),
           );
         },
       },
@@ -490,9 +491,10 @@ void _showLogoutDialog(BuildContext context) {
           ElevatedButton(
             onPressed: () async {
               if (!context.mounted) return;
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
                 return const LoginScreen();
-              }), (r){
+              }), (r) {
                 return false;
               });
             },
