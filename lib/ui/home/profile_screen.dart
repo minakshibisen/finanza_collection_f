@@ -3,6 +3,7 @@ import 'package:finanza_collection_f/ui/auth/pin/change_pin_Screen.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 
+import '../../app_localizations.dart';
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
 import '../../main.dart';
@@ -110,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       {
         "title": "Change Language",
         "icon": Icons.language,
-        "onTap": () {},
+        "onTap": (){}//() => _showLanguageDialog(context),
       },
       {
         "title": "App Theme",
@@ -385,6 +386,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
+/*void _showLanguageDialog(BuildContext context) {
+  final languages = [
+    {"code": "en", "name": "English"},
+    {"code": "hi", "name": "हिन्दी"},
+    {"code": "mr", "name": "मराठी"}
+  ];
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(AppLocalizations.of(context)!.translate("change_language")),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: languages.map((lang) =>
+            ListTile(
+              title: Text(lang['name']!),
+              onTap: () {
+                Navigator.of(context).pop();
+                MyApp.of(context)?.setLocale(Locale(lang['code']!));
+              },
+            )
+        ).toList(),
+      ),
+    ),
+  );
+}*/
 void _showThemeSelectionDialog(BuildContext context) {
   showDialog(
     context: context,
