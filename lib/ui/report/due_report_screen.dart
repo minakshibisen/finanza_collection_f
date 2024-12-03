@@ -59,7 +59,6 @@ class _DueReportScreenState extends State<DueReportScreen> {
         });
         return;
       }
-      print(response);
       final data = response;
 
       if (data['status'] == '0') {

@@ -1,15 +1,14 @@
 import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
+import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
 import '../../common/input_field.dart';
-import '../../common/title_input_field.dart';
 import '../../main.dart';
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
@@ -32,8 +31,9 @@ class PTPScreenState extends State<PTPScreen> {
   @override
   void initState() {
     super.initState();
-    _dateController.text = DateFormat('dd-MM-yyyy').format(DateTime.timestamp());
-    _ptpListApi();
+    _dateController.text =
+        DateFormat('dd-MM-yyyy').format(DateTime.timestamp());
+    _dateController.addListener(() => _ptpListApi());
   }
 
   void _ptpListApi() async {
@@ -56,7 +56,6 @@ class PTPScreenState extends State<PTPScreen> {
         },
       );
 
-      // Check if the widget is still mounted before updating state
       if (!mounted) return;
 
       if (response['error'] == true) {
@@ -71,7 +70,6 @@ class PTPScreenState extends State<PTPScreen> {
         });
         return;
       }
-      print(response);
       final data = response;
 
       if (data['status'] == '0') {
@@ -119,7 +117,8 @@ class PTPScreenState extends State<PTPScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -132,7 +131,9 @@ class PTPScreenState extends State<PTPScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  DatePickerField(controller: _dateController,),
+                  DatePickerField(
+                    controller: _dateController,
+                  ),
                   const SizedBox(height: 5),
                 ],
               ),
@@ -147,11 +148,11 @@ class PTPScreenState extends State<PTPScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset('assets/images/ic_empty.png',
-                                    width:50, height: 50),
+                                    width: 50, height: 50),
                                 const Text(
                                   "No PTP found",
-                                  style:
-                                      TextStyle(color: AppColors.titleLightColor),
+                                  style: TextStyle(
+                                      color: AppColors.titleLightColor),
                                 ),
                               ],
                             ),
@@ -166,10 +167,8 @@ class PTPScreenState extends State<PTPScreen> {
                                 child: CollectionItemCard(
                                   name: item['customer_name'] ?? 'Unknown',
                                   lan: item['lan'] ?? 'N/A',
-                                  address:
-                                      item['Communication'] ?? 'No address',
-                                  alternateAddress:
-                                      item['Permanent'] ?? 'No address',
+                                  address: item['Communication'] ?? '',
+                                  alternateAddress: item['Permanent'] ?? '',
                                   comment: item['comment'],
                                   onTap: () {
                                     // Handle item tap if needed
@@ -188,6 +187,7 @@ class PTPScreenState extends State<PTPScreen> {
 
 class DatePickerField extends StatefulWidget {
   final TextEditingController controller;
+
   const DatePickerField({super.key, required this.controller});
 
   @override
@@ -195,7 +195,6 @@ class DatePickerField extends StatefulWidget {
 }
 
 class _DatePickerFieldState extends State<DatePickerField> {
-
   @override
   void dispose() {
     widget.controller.dispose();
@@ -320,19 +319,21 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (widget.comment.isNotEmpty) const SizedBox(height: 8),
-                      if (widget.comment.isNotEmpty) Text(
-                        textAlign: TextAlign.start,
-                        widget.comment,
-                        style: const TextStyle(
-                            fontSize: 13, color: AppColors.titleColor),
-                      ),
+                      if (widget.comment.isNotEmpty)
+                        Text(
+                          textAlign: TextAlign.start,
+                          widget.comment,
+                          style: const TextStyle(
+                              fontSize: 13, color: AppColors.titleColor),
+                        ),
                       if (widget.address.isNotEmpty) const SizedBox(height: 8),
-                      if (widget.address.isNotEmpty) Text(
-                        textAlign: TextAlign.start,
-                        widget.address,
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColors.titleColor),
-                      ),
+                      if (widget.address.isNotEmpty)
+                        Text(
+                          textAlign: TextAlign.start,
+                          widget.address,
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.titleColor),
+                        ),
                     ],
                   ),
                 ],
@@ -356,15 +357,17 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                   //   width: .5,
                   //   padding: EdgeInsets.symmetric(vertical: 5),
                   // ),
-                  _buildActionButton(Icons.handshake, 'PTP', Colors.orange, () {
-                    List<String> list = [];
-                    list.add(widget.address);
-                    list.add(widget.alternateAddress);
-
+                  _buildActionButton(
+                      Icons.account_balance_wallet, 'Collection', Colors.green,
+                      () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => AddPtpScreen(
-                              lan: widget.lan, name: widget.name, address: list,)),
+                          builder: (context) => AddCollectionScreen(
+                                lan: widget.lan,
+                                name: widget.name,
+                                appId: '',
+                                fileId: '',
+                              )),
                     );
                   }),
                   Container(
@@ -373,12 +376,18 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   _buildActionButton(
-                      Icons.account_balance_wallet, 'Collection', Colors.green,
-                      () {
+                      Icons.handshake, 'Add Promise', Colors.orange, () {
+                    List<String> list = [];
+                    list.add(widget.address);
+                    list.add(widget.alternateAddress);
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => AddCollectionScreen(
-                              lan: widget.lan, name: widget.name,appId: '',fileId: '',)),
+                          builder: (context) => AddPtpScreen(
+                                lan: widget.lan,
+                                name: widget.name,
+                                address: list,
+                              )),
                     );
                   }),
                 ],
@@ -392,17 +401,21 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
 
   Widget _buildActionButton(
       IconData icon, String label, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Icon(icon, size: 15),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-          ),
-        ],
+    return Flexible(
+      flex: 1,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 15),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }

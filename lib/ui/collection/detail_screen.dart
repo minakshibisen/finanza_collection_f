@@ -13,12 +13,14 @@ class DetailScreen extends StatefulWidget {
   final String appId;
   final String fileId;
   final String leadId;
+  final String lan;
 
   const DetailScreen({
     super.key,
     required this.appId,
     required this.fileId,
     required this.leadId,
+    required this.lan,
   });
 
   @override
@@ -56,6 +58,7 @@ class _DetailScreenState extends State<DetailScreen> {
           'app_id': widget.appId,
           'file_id': widget.fileId,
           'lead_id': widget.leadId,
+          'lan': widget.lan,
           'company_id': companyId.toString(),
           'branch_id': branchId.toString(),
         },
@@ -98,7 +101,7 @@ class _DetailScreenState extends State<DetailScreen> {
         });
       }
 
-      if(appCoAppList['error'] == true) {
+      if (appCoAppList['error'] == true) {
         setState(() {
           coAppError = true;
           isLoading = false;
@@ -184,7 +187,6 @@ class _DetailScreenState extends State<DetailScreen> {
                                 applicantListItems.asMap().entries.map((entry) {
                               final index = entry.key;
                               final item = entry.value;
-                              print(item);
                               return FadeInLeft(
                                 delay: Duration(milliseconds: index * 160),
                                 child: CollectionItemCard(

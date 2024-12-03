@@ -1,23 +1,19 @@
-import 'dart:math';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
+import '../../common/default_app_bar.dart';
 import '../../common/input_field.dart';
 import '../../common/title_input_field.dart';
 import '../../common/titled_dropdown.dart';
-
 import '../../main.dart';
 import '../../utils/colors.dart';
-import '../../common/default_app_bar.dart';
 import '../../utils/common_util.dart';
 import '../../utils/constants.dart';
 import '../../utils/loading_widget.dart';
 import '../../utils/session_helper.dart';
-
 
 class CollectionReportScreen extends StatefulWidget {
   const CollectionReportScreen({super.key});
@@ -27,22 +23,20 @@ class CollectionReportScreen extends StatefulWidget {
 }
 
 class _CollectionReportScreenState extends State<CollectionReportScreen> {
-
   final TextEditingController fromdateController = TextEditingController();
   final TextEditingController todateController = TextEditingController();
   String? selectStatusMode;
   var isLoading = false;
   Map<String, dynamic> statusTypeList = {};
-  Map<String, dynamic> collectionReportList = {};
+  List<dynamic> collectionReportList = [];
 
   void addReceipt() {
     if (selectStatusMode == null || selectStatusMode!.isEmpty) {
       showSnackBar("Select Status", context);
       return;
     }
-
-
   }
+
   @override
   void dispose() {
     fromdateController.dispose();
@@ -53,15 +47,14 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
   @override
   void initState() {
     super.initState();
-  getStatusType();
-
+    getStatusType();
   }
+
   void getStatusType() async {
     try {
       final response = await ApiHelper.getRequest(
         url: BaseUrl + getCollectionStatus,
       );
-      print(response);
 
       if (!mounted) return;
 
@@ -112,22 +105,22 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
     }
   }
 
-
   void collectionReportApi(status) async {
     if (isLoading) return;
 
     setState(() {
       isLoading = true;
     });
-    var userId = await SessionHelper.getSessionData(SessionKeys.userId);
+    var userId = await SessionHelper.getUserId();
     try {
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getCollectionStatusReport,   body: {
-        "start_date": fromdateController.toString(),
-        "end_date": todateController.toString(),
-        "status": status.toString(),
-        "user_id": userId.toString(),
-      },
+        url: BaseUrl + getCollectionStatusReport,
+        body: {
+          "start_date": fromdateController.text.toString(),
+          "end_date": todateController.text.toString(),
+          "status": status.toString(),
+          "user_id": userId.toString(),
+        },
       );
 
       if (!mounted) return;
@@ -139,38 +132,18 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
           description: response['message'] ?? "Unknown error occurred",
         );
         setState(() {
-          collectionReportList = {};
+          collectionReportList = [];
           isLoading = false;
         });
         return;
       }
-      print(response);
-      final data = response;
 
-      if (data['status'] == '0') {
-        CommonToast.showToast(
-          context: context,
-          title: "Request Failed",
-          description: data['error']?.toString() ?? "No data found",
-        );
-        setState(() {
-          collectionReportList = {};
-          isLoading = false;
-        });
-        return;
-      } else if(data['status'] == '1') {
-        final Map<String, String> dropdownMap = {
-          for (var item in data['response'])
-            item['key']: item['value']
-        };
+      var data = response['response'] ?? [];
 
-        setState(() {
-          collectionReportList = dropdownMap;
-          isLoading = false;
-        });
-      }
-
-
+      setState(() {
+        collectionReportList = data;
+        isLoading = false;
+      });
     } catch (e) {
       if (!mounted) return;
 
@@ -181,25 +154,17 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
       );
 
       setState(() {
-        collectionReportList = {};
+        collectionReportList = [];
         isLoading = false;
       });
-      if (selectStatusMode == null) {
-        CommonToast.showToast(
-          context: context,
-          title: "Validation Error",
-          description: "Please select receipt mode",
-        );
-      }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.textOnPrimary,
       appBar: DefaultAppBar(title: "Collection Report", size: size),
       body: Padding(
@@ -221,49 +186,70 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
                 items: statusTypeList != {} ? statusTypeList.keys.toList() : [],
                 title: "Status",
                 onChanged: (value) {
-                  selectStatusMode = value;
-                  collectionReportApi (value);
+                  selectStatusMode = statusTypeList[value].toString();
+                  collectionReportApi(selectStatusMode);
                 }),
-
+            const SizedBox(height: 30),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Collections:",
+                    style: TextStyle(
+                      color: AppColors.titleColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  // SizedBox(width: 10,),
+                  // Icon(Icons.arrow_forward_ios_rounded, color: AppColors.titleColor, size: 14),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
             isLoading
                 ? const SizedBox(height: 200, child: LoadingWidget(size: 40))
                 : Expanded(
-              child: collectionReportList.isEmpty
-                  ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/ic_empty.png',
-                        width:50, height: 50),
-                    const Text(
-                      "No Item found",
-                      style:
-                      TextStyle(color: AppColors.titleLightColor),
-                    ),
-                  ],
-                ),
-              )
-                  : ListView.builder(
-                itemCount: collectionReportList.length,
-                itemBuilder: (context, index) {
-                  var item = collectionReportList[index];
-                  return FadeInLeft(
-                    delay: Duration(milliseconds: index * 180),
-                    child: CollectionReportItemCard(
-                      name: item['customer_name'] ?? 'Unknown',
-                      lan: item['lan'] ?? 'N/A',
-                      onTap: () {},
-                      comment: item['narration'],
-                      date: item['transaction_date'],
-                      amount: item['due_amount'],
-                      index: index,
-                    ),
-                  );
-                },
-              ),
-            ),
-
+                    child: collectionReportList.isEmpty
+                        ? Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_empty.png',
+                                    width: 50, height: 50),
+                                const Text(
+                                  "No Item found",
+                                  style: TextStyle(
+                                      color: AppColors.titleLightColor),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: collectionReportList.length,
+                            itemBuilder: (context, index) {
+                              var item = collectionReportList[index];
+                              return FadeInLeft(
+                                delay: Duration(milliseconds: index * 180),
+                                child: CollectionReportItemCard(
+                                  name: item['customer_name'] ?? 'Unknown',
+                                  lan: item['lan'] ?? 'N/A',
+                                  onTap: () {},
+                                  receiptMode: item['receipt_mode'] ?? 'N/A',
+                                  receiptId: item['receipt_id'] ?? 'N/A',
+                                  comment: item['narration'] ?? 'N/A',
+                                  date: item['instrument_date'] ?? 'N/A',
+                                  amount: item['amount'] ?? '0',
+                                  index: index,
+                                ),
+                              );
+                            },
+                          ),
+                  ),
           ],
         ),
       ),
@@ -312,6 +298,8 @@ class CollectionReportItemCard extends StatefulWidget {
   final String lan;
   final String comment;
   final String date;
+  final String receiptId;
+  final String receiptMode;
   final String amount;
   final VoidCallback onTap;
   final int index;
@@ -325,10 +313,13 @@ class CollectionReportItemCard extends StatefulWidget {
     required this.lan,
     required this.onTap,
     required this.index,
+    required this.receiptId,
+    required this.receiptMode,
   });
 
   @override
-  State<CollectionReportItemCard> createState() => _CollectionReportItemCardState();
+  State<CollectionReportItemCard> createState() =>
+      _CollectionReportItemCardState();
 }
 
 class _CollectionReportItemCardState extends State<CollectionReportItemCard> {
@@ -340,7 +331,7 @@ class _CollectionReportItemCardState extends State<CollectionReportItemCard> {
       child: Card(
         color: Colors.white,
         elevation: 1,
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -354,21 +345,28 @@ class _CollectionReportItemCardState extends State<CollectionReportItemCard> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.titleColor,
+                      Flexible(
+                        flex: 7,
+                        child: Text(
+                          widget.name,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.titleColor,
+                          ),
                         ),
                       ),
-                      Text(
-                        widget.amount,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.titleColor,
+                      Flexible(
+                        flex: 3,
+                        child: Text(
+                          '₹ ${getFancyNumber(double.parse(widget.amount))}',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.titleColor,
+                          ),
                         ),
                       ),
                     ],
@@ -408,8 +406,29 @@ class _CollectionReportItemCardState extends State<CollectionReportItemCard> {
                     ],
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Text(
+                            'Receipt Mode: ',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.titleColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            widget.receiptMode,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.titleColor,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         textAlign: TextAlign.start,

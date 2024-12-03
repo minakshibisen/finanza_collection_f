@@ -97,7 +97,8 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
     List<Map<dynamic, dynamic>> collectionData = [];
 
     for (var item in collectionItems) {
-      collectionData.add({'"key"': '"${item.type}"', '"value"': '"${item.amount}"'});
+      collectionData
+          .add({'"key"': '"${item.type}"', '"value"': '"${item.amount}"'});
     }
 
     try {
@@ -130,8 +131,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
         return;
       }
       final data = response;
-      print(data);
-
       if (data['status'] == 0) {
         CommonToast.showToast(
           context: context,
@@ -149,7 +148,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      print(e);
       CommonToast.showToast(
         context: context,
         title: "Error",
@@ -230,7 +228,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
         });
         return;
       }
-      print(response);
       final data = response;
 
       if (data['status'] == '0') {
@@ -245,7 +242,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
         });
         return;
       } else if (data['status'] == '1') {
-        print(data);
         final Map<String, String> dropdownMap = {
           for (var item in data['response'])
             item['ledger_name']: item['ledger_id']
@@ -284,8 +280,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
           "user_type": userType.toString(),
         },
       );
-      print(response);
-
       if (!mounted) return;
 
       if (response['error'] == true) {
@@ -361,7 +355,6 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
         });
         return;
       }
-      print(response);
       final data = response;
 
       if (data['status'] == '0') {

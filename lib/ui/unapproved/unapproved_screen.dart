@@ -60,7 +60,6 @@ class _UnapprovedScreenState extends State<UnapprovedScreen> {
         });
         return;
       }
-      print(response);
       final data = response;
 
       if (data['status'] == '0') {
@@ -198,7 +197,6 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
 
         return;
       }
-      print(response);
       final data = response;
 
       if (data['status'] == '0') {

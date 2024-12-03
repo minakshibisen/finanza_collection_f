@@ -1,10 +1,8 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:finanza_collection_f/common/primary_button.dart';
 import 'package:finanza_collection_f/common/user_banner.dart';
-import 'package:finanza_collection_f/ui/ptp/ptp_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
-import 'package:finanza_collection_f/common/default_app_bar.dart';
 import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -14,12 +12,10 @@ import '../../common/common_toast.dart';
 import '../../common/input_field.dart';
 import '../../common/success_dialog.dart';
 import '../../common/title_input_field.dart';
-import '../../common/titled_dropdown.dart';
 import '../../main.dart';
 import '../../utils/common_util.dart';
 import '../../utils/constants.dart';
 import '../../utils/session_helper.dart';
-import '../collection/detail_screen.dart';
 
 class AddPtpScreen extends StatefulWidget {
   final String lan;
@@ -152,21 +148,7 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
         });
         return;
       }
-      print(response);
       final data = response;
-
-      if (data['status'] == '0') {
-        CommonToast.showToast(
-          context: context,
-          title: "Request Failed",
-          description: data['error']?.toString() ?? "No data found",
-        );
-        setState(() {
-          ptpItems = [];
-          isListLoading = false;
-        });
-        return;
-      }
 
       setState(() {
         ptpItems = data['response'] ?? [];
@@ -278,22 +260,47 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
                                 size: 30,
                               ),
                             )
-                          : Column(
-                              children: ptpItems.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final item = entry.value;
-                                return FadeInLeft(
-                                  delay: Duration(milliseconds: index * 160),
-                                  child: PtpItemCard(
-                                    name: item['pay_date'],
-                                    comment: item['comment'],
-                                    onTap: () {
-                                      // Handle item tap if needed
-                                    },
+                          : ptpItems.isEmpty
+                              ? SizedBox(
+                                  height: 150,
+                                  child: Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                            'assets/images/ic_empty.png',
+                                            width: 50,
+                                            height: 50),
+                                        const Text(
+                                          "No Item found",
+                                          style: TextStyle(
+                                              color: AppColors.titleLightColor),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                );
-                              }).toList(),
-                            ),
+                                )
+                              : Column(
+                                  children:
+                                      ptpItems.asMap().entries.map((entry) {
+                                    final index = entry.key;
+                                    final item = entry.value;
+                                    return FadeInLeft(
+                                      delay:
+                                          Duration(milliseconds: index * 160),
+                                      child: PtpItemCard(
+                                        name: item['pay_date'],
+                                        comment: item['comment'],
+                                        onTap: () {
+                                          // Handle item tap if needed
+                                        },
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
                     ],
                   ),
                 ),

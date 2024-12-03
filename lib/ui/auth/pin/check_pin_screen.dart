@@ -102,7 +102,7 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                                 image: DecorationImage(
                                     opacity: 0.5,
                                     image:
-                                    AssetImage('assets/images/clock.png'))),
+                                        AssetImage('assets/images/clock.png'))),
                           )),
                     ),
                     Positioned(
@@ -113,7 +113,7 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                             child: Center(
                               child: Padding(
                                 padding:
-                                EdgeInsets.only(top: screenHeight * 0.05),
+                                    EdgeInsets.only(top: screenHeight * 0.05),
                                 child: Container(
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
@@ -169,14 +169,15 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                   );
                 },
                 child: const Text('Register With Login ID?',
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                     textAlign: TextAlign.center),
               ),
               const SizedBox(
                 height: 10,
               ),
               InkWell(
-                onTap:  () {
+                onTap: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -184,7 +185,8 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                   );
                 },
                 child: const Text('Forgot Pin?',
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                     textAlign: TextAlign.center),
               ),
             ],
@@ -200,12 +202,12 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
           .showSnackBar(const SnackBar(content: Text("Enter Pin!")));
     } else {
       var existingPin = await SessionHelper.getPin();
-      print(existingPin);
+
       if (existingPin == pin) {
+        if (!context.mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
         ScaffoldMessenger.of(context)

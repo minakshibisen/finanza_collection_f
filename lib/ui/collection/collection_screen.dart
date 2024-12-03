@@ -68,7 +68,6 @@ class CollectionScreenState extends State<CollectionScreen> {
       }
 
       final data = response;
-      print(data);
 
       if (data['status'] == '0') {
         CommonToast.showToast(
@@ -216,7 +215,8 @@ class CollectionItemCard extends StatefulWidget {
     required this.onTap,
     required this.appId,
     required this.fileId,
-    required this.alternateAddress, required this.leadId,
+    required this.alternateAddress,
+    required this.leadId,
   });
 
   @override
@@ -322,10 +322,11 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => DetailScreen(
-                                      fileId: widget.fileId,
-                                      appId: widget.appId,
-                                      leadId: widget.leadId,
-                                    )),
+                                          fileId: widget.fileId,
+                                          appId: widget.appId,
+                                          leadId: widget.leadId,
+                                          lan: widget.lan,
+                                        )),
                               );
                             },
                             child: Container(
@@ -434,7 +435,6 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
 class RoundedSearchInput extends StatelessWidget {
   final TextEditingController textController;
   final String hintText;
-
 
   const RoundedSearchInput(
       {required this.textController, required this.hintText, super.key});

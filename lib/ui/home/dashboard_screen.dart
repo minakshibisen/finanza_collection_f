@@ -7,6 +7,7 @@ import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/utils/common_util.dart';
 import 'package:finanza_collection_f/utils/constants.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../common/api_helper.dart';
 import '../../common/common_toast.dart';
@@ -155,7 +156,8 @@ class DashboardGrid extends StatefulWidget {
   State<DashboardGrid> createState() => _DashboardGridState();
 }
 
-class _DashboardGridState extends State<DashboardGrid> {
+class _DashboardGridState extends State<DashboardGrid>
+    with WidgetsBindingObserver {
   bool isLoading = false;
 
   var noOfReceipt = '0';
@@ -164,9 +166,22 @@ class _DashboardGridState extends State<DashboardGrid> {
   var cashInHand = '0';
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(LifecycleEventHandler());
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     getData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+        resumeCallBack: () async {
+          getData();
+        },
+      ));
+    });
   }
 
   void getData() async {
@@ -174,12 +189,7 @@ class _DashboardGridState extends State<DashboardGrid> {
       var userId = await SessionHelper.getUserId();
 
       final response = await ApiHelper.postRequest(
-          url: BaseUrl + getDashboardData,
-          body: {
-            "user_id": userId
-          }
-      );
-      print(response);
+          url: BaseUrl + getDashboardData, body: {"user_id": userId});
 
       if (!mounted) return;
 
@@ -206,15 +216,16 @@ class _DashboardGridState extends State<DashboardGrid> {
           isLoading = false;
         });
         return;
-      } else if (data['status'] == 1) {
+      } else {
         var response = data['response'];
         setState(() {
           noOfReceipt = response['no_of_receipt']?.toString() ?? "0";
-          totalCollectionAmount = response['total_collection_amount']?.toString() ?? "0";
+          totalCollectionAmount =
+              response['total_collection_amount']?.toString() ?? "0";
           cashInHand = response['cash_in_hand']?.toString() ?? "0";
-          numberOfApprovedReceipt = response['no_of_approved_receipt']?.toString() ?? "0";
+          numberOfApprovedReceipt =
+              response['no_of_approved_receipt']?.toString() ?? "0";
         });
-
       }
 
       setState(() {
@@ -234,7 +245,6 @@ class _DashboardGridState extends State<DashboardGrid> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -508,5 +518,25 @@ class DashboardCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class LifecycleEventHandler extends WidgetsBindingObserver {
+  final AsyncCallback? resumeCallBack;
+  final AsyncCallback? suspendingCallBack;
+
+  LifecycleEventHandler({
+    this.resumeCallBack,
+    this.suspendingCallBack,
+  });
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed && resumeCallBack != null) {
+      await resumeCallBack!();
+    } else if (state == AppLifecycleState.inactive &&
+        suspendingCallBack != null) {
+      await suspendingCallBack!();
+    }
   }
 }

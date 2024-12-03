@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/common/common_toast.dart';
 import 'package:finanza_collection_f/common/primary_button.dart';
@@ -10,13 +7,11 @@ import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/utils/common_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../common/api_helper.dart';
 import '../../common/input_field.dart';
-import 'package:http/http.dart' as http;
-
 import '../../utils/constants.dart';
 import '../../utils/session_helper.dart';
-import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
 
   Future<void> loginApi() async {
-
     if (usernameController.text.isEmpty) {
       showSnackBar("Enter Username");
     } else if (passwordController.text.isEmpty) {
@@ -49,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: {
           'user_id': usernameController.text,
           'password': passwordController.text,
+          'mType': 'MTAy',
         },
       );
       if (!mounted) return;
@@ -56,7 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         isLoading = false;
       });
-
 
       if (response['error'] == true) {
         CommonToast.showToast(
@@ -67,24 +61,39 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         final data = response;
 
-        if(data['status'] == '0') {
-          CommonToast.showToast(context: context, title: "Login Failed", description: data['response']['error'].toString(), duration: const Duration(seconds: 10));
+        if (data['status'] == '0') {
+          CommonToast.showToast(
+              context: context,
+              title: "Login Failed",
+              description: data['response']['error'].toString(),
+              duration: const Duration(seconds: 10));
         } else {
-          print(data);
           var response = data['response'];
           var userdata = response['userdata'];
           var userProfile = response['userprofile'];
 
-          await SessionHelper.saveSessionData(SessionKeys.userId, userProfile['user_id']);
-          await SessionHelper.saveSessionData(SessionKeys.mobile, userProfile['mobile']);
-          await SessionHelper.saveSessionData(SessionKeys.email, userProfile['email']);
-          await SessionHelper.saveSessionData(SessionKeys.gender, userProfile['gender']);
-          await SessionHelper.saveSessionData(SessionKeys.companyId, userProfile['company_id']);
-          await SessionHelper.saveSessionData(SessionKeys.branchList, response['branch_list'].toString());
-          await SessionHelper.saveSessionData(SessionKeys.userImage, response['userphoto']['file_content']);
-          await SessionHelper.saveSessionData(SessionKeys.ledgerId, userdata?['ledger_id']);
-          await SessionHelper.saveSessionData(SessionKeys.permissionGroup, userdata?['permission_group']);
-          await SessionHelper.saveSessionData(SessionKeys.userType, userdata?['user_type']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.userId, userdata?['user_id']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.mobile, userdata?['mobile']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.email, userProfile['email']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.gender, userProfile['gender']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.companyId, userdata?['company_id']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.branchList, response['branch_list'].toString());
+          await SessionHelper.saveSessionData(
+              SessionKeys.userImage, response['userphoto']['file_content']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.ledgerId, userdata?['ledger_id']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.permissionGroup, userdata?['permission_group']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.designation, userdata?['group_name']);
+          await SessionHelper.saveSessionData(
+              SessionKeys.userType, userdata?['user_type']);
 
           if (!mounted) return;
 
