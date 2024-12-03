@@ -120,7 +120,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
                                           image: AssetImage(
-                                              'assets/images/logo_finanza.png'))),
+                                              'assets/images/logo_collection.png'))),
                                 ),
                               ),
                             ),

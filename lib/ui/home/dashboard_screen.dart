@@ -1,11 +1,14 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/common/success_dialog.dart';
 import 'package:finanza_collection_f/ui/collection/collection_screen.dart';
 import 'package:finanza_collection_f/ui/home/dashboard_location_bar.dart';
+import 'package:finanza_collection_f/ui/misc/notification_screen.dart';
 import 'package:finanza_collection_f/ui/report/report_screen.dart';
 import 'package:finanza_collection_f/ui/unapproved/unapproved_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:finanza_collection_f/utils/common_util.dart';
 import 'package:finanza_collection_f/utils/constants.dart';
+import 'package:finanza_collection_f/utils/loading_widget.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,12 +50,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.notifications_none,
                 color: AppColors.textOnPrimary),
             onPressed: () {
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                return const DashboardScreen();
-              }), (r) {
-                return false;
-              });
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const NotificationScreen()),
+              );
             },
           ),
         ],
@@ -159,7 +160,10 @@ class DashboardGrid extends StatefulWidget {
 class _DashboardGridState extends State<DashboardGrid>
     with WidgetsBindingObserver {
   bool isLoading = false;
-
+  var deviceId = '';
+  var location = '';
+  var pincode = '';
+  var city = '';
   var noOfReceipt = '0';
   var totalCollectionAmount = '0';
   var numberOfApprovedReceipt = '0';
@@ -432,8 +436,15 @@ class _DashboardGridState extends State<DashboardGrid>
   }
 }
 
-class DashboardCard extends StatelessWidget {
+class DashboardCard extends StatefulWidget {
   const DashboardCard({super.key});
+
+  @override
+  State<DashboardCard> createState() => _DashboardCardState();
+}
+
+class _DashboardCardState extends State<DashboardCard> {
+  bool isAttendanceLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -474,16 +485,84 @@ class DashboardCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const ReportScreen()),
             );
           }),
-          _buildActionButton(Icons.punch_clock, 'Attendance',
-              'Punch your daily attendance', () {}),
+          _buildActionButton(
+              Icons.punch_clock,
+              'Attendance',
+              loading: isAttendanceLoading,
+              'Punch your daily attendance', () {
+            showConfirmation(context);
+          }),
         ],
       ),
     );
   }
 
+  Future<bool> addAttendance(BuildContext context) async {
+    _setLoading(true);
+    try {
+      var userId = await SessionHelper.getUserId();
+
+      if (!context.mounted) return false;
+      var address = await getCurrentLocation(context);
+      var deviceId = await getId();
+
+      final response =
+          await ApiHelper.postRequest(url: BaseUrl + infoAttendence, body: {
+        "user_id": userId.toString(),
+        'longitude': address['longitude'].toString(),
+        'latitude': address['latitude'].toString(),
+        "location": address['location'],
+        "pincode": address['pincode'],
+        "device_id": deviceId,
+        "city": address['city'],
+      });
+
+      if (!context.mounted) return false;
+
+      if (response['error'] == true) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: response['message'] ?? "Unknown error occurred",
+        );
+
+        _setLoading(false);
+        return false;
+      }
+      final data = response;
+
+      if (data['status'] == "0" || data['status'] == 0) {
+        CommonToast.showToast(
+          context: context,
+          title: "Request Failed",
+          description: data['error']?.toString() ?? "No data found",
+        );
+
+        _setLoading(false);
+        return false;
+      }
+      if (data['status'] == "1" || data['status'] == 1) {
+        _setLoading(false);
+        return true;
+      }
+      _setLoading(false);
+      return false;
+    } catch (e) {
+      if (!context.mounted) return false;
+      _setLoading(false);
+
+      CommonToast.showToast(
+        context: context,
+        title: "Error",
+        description: "An unexpected error occurred: ${e.toString()}",
+      );
+      return false;
+    }
+  }
+
   Widget _buildActionButton(
       IconData icon, String label, String subTitle, VoidCallback onTap,
-      {Color color = AppColors.primaryColor}) {
+      {Color color = AppColors.primaryColor, bool loading = false}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -492,31 +571,74 @@ class DashboardCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             color: AppColors.lightGrey,
             border: Border.all(color: Colors.grey.shade200)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  subTitle,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal),
-                ),
-              ],
-            ),
-            const SizedBox(width: 4),
-            Icon(icon, color: color, size: 30),
-          ],
-        ),
+        child: loading
+            ? const LoadingWidget()
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        subTitle,
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(icon, color: color, size: 30),
+                ],
+              ),
       ),
+    );
+  }
+
+  void _setLoading(bool bool) {
+    setState(() {
+      isAttendanceLoading = bool;
+    });
+  }
+
+  void showConfirmation(BuildContext context) {
+    if (isAttendanceLoading) return;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Attendance'),
+          content: const Text('Are you sure you want to punch attendance?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                var added = await addAttendance(context);
+
+                if(!context.mounted) return;
+                if (added) {
+                  showSuccessDialog(context, "Request Successful",
+                      onDismiss: () => Navigator.of(context).pop());
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

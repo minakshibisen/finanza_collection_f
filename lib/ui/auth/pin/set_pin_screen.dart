@@ -117,7 +117,7 @@ class _SetPinScreenState extends State<SetPinScreen> {
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
                                           image: AssetImage(
-                                              'assets/images/logo_finanza.png'))),
+                                              'assets/images/logo_collection.png'))),
                                 ),
                               ),
                             ),

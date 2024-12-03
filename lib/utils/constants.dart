@@ -21,6 +21,7 @@ const collectionSubmit = "collectionSubmit";
 
 const getDashboardData = "getDashboardData";
 const listCoApplicant = "listCoApplicant";
+const infoAttendence = "infoAttendence";
 
 
 class SessionKeys {

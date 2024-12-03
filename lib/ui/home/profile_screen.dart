@@ -493,7 +493,7 @@ void _showLogoutDialog(BuildContext context) {
               if (!context.mounted) return;
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                return const LoginScreen();
+                return const CheckPinScreen();
               }), (r) {
                 return false;
               });

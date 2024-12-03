@@ -118,7 +118,7 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
                                           image: AssetImage(
-                                              'assets/images/logo_finanza.png'))),
+                                              'assets/images/logo_collection.png'))),
                                 ),
                               ),
                             ),

@@ -191,10 +191,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding:
                                     EdgeInsets.only(top: screenHeight * 0.05),
                                 child: Container(
+                                  width: screenWidth * 0.9,
                                   decoration: const BoxDecoration(
                                       image: DecorationImage(
                                           image: AssetImage(
-                                              'assets/images/logo_finanza.png'))),
+                                              'assets/images/logo_collection.png'))),
                                 ),
                               ),
                             ),
