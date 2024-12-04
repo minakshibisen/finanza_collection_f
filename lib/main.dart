@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -16,35 +15,35 @@ const BaseUrl = "http://172.17.1.1/2009/api/";
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-
   static _MyAppState? of(BuildContext context) {
     return context.findAncestorStateOfType<_MyAppState>();
   }
+
+  @override
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
- /* Locale _locale = const Locale('en');
+  Locale _locale = const Locale('en');
 
   void setLocale(Locale locale) {
     setState(() {
       _locale = locale;
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Finanza Collection',
       debugShowCheckedModeBanner: false,
-    /*  locale: _locale,
+      locale: _locale,
       supportedLocales: const [Locale('en'), Locale('hi'), Locale('mr')],
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
-      ],*/
+      ],
       theme: ThemeData(
         fontFamily: GoogleFonts.workSans().fontFamily,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),

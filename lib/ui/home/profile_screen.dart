@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       {
         "title": "Change Language",
         "icon": Icons.language,
-        "onTap": (){}//() => _showLanguageDialog(context),
+        "onTap": () {_showLanguageDialog(context);},
       },
       {
         "title": "App Theme",
@@ -135,7 +135,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         "onTap": () {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (context) => const ChangePasswordScreen()),
+              builder: (context) => const ChangePasswordScreen(),
+            ),
           );
         },
       },
@@ -172,88 +173,89 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => const NotificationScreen()),
+                  builder: (context) => const NotificationScreen(),
+                ),
               );
             },
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Profile Section
-          Stack(
-            children: [
-              _buildUserDetailCard(),
-              // Profile Stats Card
-              Column(
-                children: [
-                  SizedBox(height: size.height * 0.26),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        color: AppColors.lightGrey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            child: _buildCardItem(
-                              title: "Branch",
-                              subtitle: branch,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Profile Section
+            Stack(
+              children: [
+                _buildUserDetailCard(),
+                Column(
+                  children: [
+                    SizedBox(height: size.height * 0.26),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightGrey,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              child: _buildCardItem(
+                                title: "Branch",
+                                subtitle: branch,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 15),
-                            child: Container(
-                              height: 0.2,
-                              color: Colors.grey[400],
-                              width: double.infinity,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 15),
+                              child: Container(
+                                height: 0.2,
+                                color: Colors.grey[400],
+                                width: double.infinity,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            child: _buildCardItem(
-                              title: "Designation",
-                              subtitle: designation,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              child: _buildCardItem(
+                                title: "Designation",
+                                subtitle: designation,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 15),
-                            child: Container(
-                              height: 0.2,
-                              color: Colors.grey[400],
-                              width: double.infinity,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 15),
+                              child: Container(
+                                height: 0.2,
+                                color: Colors.grey[400],
+                                width: double.infinity,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            child: _buildCardItem(
-                              title: "Employee Code",
-                              subtitle: empCode,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              child: _buildCardItem(
+                                title: "Employee Code",
+                                subtitle: empCode,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // List of settings options with staggered animation
-          Expanded(
-            child: ListView.builder(
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               itemCount: listItems.length,
               itemBuilder: (context, index) {
                 final item = listItems[index];
@@ -263,9 +265,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       _buildListTile(
-                        title: item['title']!,
-                        leadingIcon: item['icon']!,
-                        onTap: item['onTap']!,
+                        title: item['title'] as String,
+                        leadingIcon: item['icon'] as IconData,
+                        onTap: item['onTap'] as VoidCallback,
                       ),
                       if (index != listItems.length - 1)
                         Padding(
@@ -282,8 +284,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -386,7 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/*void _showLanguageDialog(BuildContext context) {
+void _showLanguageDialog(BuildContext context) {
   final languages = [
     {"code": "en", "name": "English"},
     {"code": "hi", "name": "हिन्दी"},
@@ -396,22 +398,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(AppLocalizations.of(context)!.translate("change_language")),
+      title: Text(AppLocalizations.of(context)?.translate("change_language") ?? "Change Language"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        children: languages.map((lang) =>
-            ListTile(
-              title: Text(lang['name']!),
-              onTap: () {
-                Navigator.of(context).pop();
-                MyApp.of(context)?.setLocale(Locale(lang['code']!));
-              },
-            )
-        ).toList(),
+        children: languages
+            .map((lang) => ListTile(
+          title: Text(lang['name']!),
+          onTap: () {
+            // Close the dialog
+            Navigator.of(context).pop();
+
+            // Update the locale using MyApp's setLocale method
+            MyApp.of(context)?.setLocale(Locale(lang['code']!));
+          },
+        ))
+            .toList(),
       ),
     ),
   );
-}*/
+}
+
 void _showThemeSelectionDialog(BuildContext context) {
   showDialog(
     context: context,
