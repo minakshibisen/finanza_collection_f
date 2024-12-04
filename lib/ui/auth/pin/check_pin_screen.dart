@@ -1,15 +1,16 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:finanza_collection_f/utils/biometric_helper.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../home/home_screen.dart';
 import '../login_screen.dart';
 
 class CheckPinScreen extends StatefulWidget {
-  const CheckPinScreen({super.key});
+  final bool biometric;
+
+  const CheckPinScreen({super.key, this.biometric = true});
 
   @override
   State<CheckPinScreen> createState() => _CheckPinScreenState();
@@ -19,8 +20,13 @@ String pin = '';
 
 class _CheckPinScreenState extends State<CheckPinScreen> {
   @override
+  void initState() {
+    super.initState();
+    if (widget.biometric) handleBiometricAuth(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.4;
     final defaultPinTheme = PinTheme(
@@ -156,6 +162,18 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                   pin = value;
                   checkPin();
                 },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  handleBiometricAuth(context);
+                },
+                child: const Text('Use Biometric',
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    textAlign: TextAlign.center),
               ),
               const SizedBox(
                 height: 30,

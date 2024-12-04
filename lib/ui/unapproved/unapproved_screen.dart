@@ -39,7 +39,7 @@ class _UnapprovedScreenState extends State<UnapprovedScreen> {
       var userId = await SessionHelper.getSessionData(SessionKeys.userId);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getUnApprovedCollection,
+        url: baseUrl + getUnApprovedCollection,
         body: {
           'user_id': userId.toString(),
         },
@@ -180,7 +180,7 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       var userId = await SessionHelper.getSessionData(SessionKeys.userId);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + deleteCollection,
+        url: baseUrl + deleteCollection,
         body: {
           'receipt_id': receiptId,
         },

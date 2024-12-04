@@ -98,7 +98,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
 
     try {
       final response =
-          await ApiHelper.postRequest(url: BaseUrl + collectionSubmit, body: {
+          await ApiHelper.postRequest(url: baseUrl + collectionSubmit, body: {
         "user_id": userId,
         "app_id": appId,
         "file_id": fileId,
@@ -200,7 +200,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
 
     try {
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getAccountCollection,
+        url: baseUrl + getAccountCollection,
         body: {
           "ledger_id": ledgerId.toString(),
           "user_type": userType.toString(),
@@ -269,7 +269,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
 
     try {
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getCollectionsType,
+        url: baseUrl + getCollectionsType,
         body: {
           "user_id": userId.toString(),
           "user_type": userType.toString(),
@@ -333,7 +333,7 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
 
     try {
       final response = await ApiHelper.getRequest(
-        url: BaseUrl + getReceiptMode,
+        url: baseUrl + getReceiptMode,
       );
 
       if (!mounted) return;

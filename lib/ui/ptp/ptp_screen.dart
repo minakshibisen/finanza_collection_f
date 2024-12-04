@@ -48,7 +48,7 @@ class PTPScreenState extends State<PTPScreen> {
       var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getPTPList,
+        url: baseUrl + getPTPList,
         body: {
           'user_id': userId.toString(),
           'branch_id': branchId.toString(),

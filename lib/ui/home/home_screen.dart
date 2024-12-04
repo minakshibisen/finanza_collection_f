@@ -42,7 +42,7 @@ class HomeScreenState extends State<HomeScreen> {
   Future<void> profileDetailApi() async {
     var userId = await SessionHelper.getSessionData(SessionKeys.userId);
     final response = await ApiHelper.postRequest(
-      url: BaseUrl + profileDetails,
+      url: baseUrl + profileDetails,
       body: {
         'user_id': userId,
       },
@@ -88,10 +88,13 @@ class HomeScreenState extends State<HomeScreen> {
         await SessionHelper.saveSessionData(SessionKeys.mobile, data['mobile']);
         await SessionHelper.saveSessionData(SessionKeys.email, data['email']);
         await SessionHelper.saveSessionData(SessionKeys.gender, data['gender']);
-        await SessionHelper.saveSessionData(SessionKeys.branchId, data['branch_id']);
+        await SessionHelper.saveSessionData(
+            SessionKeys.branchId, data['branch_id']);
         await SessionHelper.saveSessionData(SessionKeys.username, data['name']);
-        await SessionHelper.saveSessionData(SessionKeys.designation, data['designation']);
-        await SessionHelper.saveSessionData(SessionKeys.employeeCode, data['employee_code']);
+        await SessionHelper.saveSessionData(
+            SessionKeys.designation, data['designation']);
+        await SessionHelper.saveSessionData(
+            SessionKeys.employeeCode, data['employee_code']);
       }
     }
   }

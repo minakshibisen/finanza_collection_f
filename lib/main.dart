@@ -1,5 +1,4 @@
 import 'package:finanza_collection_f/splash_screen.dart';
-import 'package:finanza_collection_f/ui/home/home_screen.dart';
 import 'package:finanza_collection_f/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,21 +8,21 @@ void main() {
   runApp(const MyApp());
 }
 
-// const BaseUrl = "https://uat.bridgelogicsoftware.com/2009/api/";
-const BaseUrl = "http://172.17.1.1/2009/api/";
+// const baseUrl = "https://uat.bridgelogicsoftware.com/2009/api/";
+const baseUrl = "http://172.17.1.1/2009/api/";
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  static _MyAppState? of(BuildContext context) {
-    return context.findAncestorStateOfType<_MyAppState>();
+  static MyAppState? of(BuildContext context) {
+    return context.findAncestorStateOfType<MyAppState>();
   }
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   Locale _locale = const Locale('en');
 
   void setLocale(Locale locale) {
@@ -50,8 +49,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
-

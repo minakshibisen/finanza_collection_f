@@ -1,4 +1,3 @@
-
 const getValidateLogin = "getValidateLogin";
 const searchCustomer = "searchCustomer";
 const getPTPList = "getPTPList";
@@ -23,7 +22,6 @@ const getDashboardData = "getDashboardData";
 const listCoApplicant = "listCoApplicant";
 const infoAttendence = "infoAttendence";
 
-
 class SessionKeys {
   static const String userId = "KEY_USER_ID";
   static const String username = "KEY_USER_NAME";
@@ -43,4 +41,5 @@ class SessionKeys {
 
   static const String mPin = "KEY_M_PIN";
 
+  static const String bioEnabled = "KEY_BIO_ENABLED";
 }

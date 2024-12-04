@@ -52,7 +52,7 @@ class _DetailScreenState extends State<DetailScreen> {
       var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getCustomerDetail,
+        url: baseUrl + getCustomerDetail,
         body: {
           'user_id': userId.toString(),
           'app_id': widget.appId,
@@ -65,7 +65,7 @@ class _DetailScreenState extends State<DetailScreen> {
       );
 
       final appCoAppList = await ApiHelper.postRequest(
-        url: BaseUrl + listCoApplicant,
+        url: baseUrl + listCoApplicant,
         body: {
           'lead_id': widget.leadId,
         },

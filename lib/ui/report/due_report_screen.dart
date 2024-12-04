@@ -38,7 +38,7 @@ class _DueReportScreenState extends State<DueReportScreen> {
       var userId = await SessionHelper.getSessionData(SessionKeys.userId);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getDueReport,
+        url: baseUrl + getDueReport,
         body: {
           'user_id': userId.toString(),
         },

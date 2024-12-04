@@ -193,7 +193,7 @@ class _DashboardGridState extends State<DashboardGrid>
       var userId = await SessionHelper.getUserId();
 
       final response = await ApiHelper.postRequest(
-          url: BaseUrl + getDashboardData, body: {"user_id": userId});
+          url: baseUrl + getDashboardData, body: {"user_id": userId});
 
       if (!mounted) return;
 
@@ -507,7 +507,7 @@ class _DashboardCardState extends State<DashboardCard> {
       var deviceId = await getId();
 
       final response =
-          await ApiHelper.postRequest(url: BaseUrl + infoAttendence, body: {
+          await ApiHelper.postRequest(url: baseUrl + infoAttendence, body: {
         "user_id": userId.toString(),
         'longitude': address['longitude'].toString(),
         'latitude': address['latitude'].toString(),
@@ -626,7 +626,7 @@ class _DashboardCardState extends State<DashboardCard> {
               onPressed: () async {
                 var added = await addAttendance(context);
 
-                if(!context.mounted) return;
+                if (!context.mounted) return;
                 if (added) {
                   showSuccessDialog(context, "Request Successful",
                       onDismiss: () => Navigator.of(context).pop());

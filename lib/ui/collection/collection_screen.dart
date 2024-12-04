@@ -45,7 +45,7 @@ class CollectionScreenState extends State<CollectionScreen> {
       var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + searchCustomer,
+        url: baseUrl + searchCustomer,
         body: {
           'user_id': userId.toString(),
           'company_id': companyId.toString(),

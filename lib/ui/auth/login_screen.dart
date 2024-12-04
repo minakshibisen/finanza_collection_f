@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
       closeKeyboard(context);
 
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getValidateLogin,
+        url: baseUrl + getValidateLogin,
         body: {
           'user_id': usernameController.text,
           'password': passwordController.text,

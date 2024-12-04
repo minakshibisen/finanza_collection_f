@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> profileDetailApi() async {
     var userId = await SessionHelper.getSessionData(SessionKeys.userId);
     final response = await ApiHelper.postRequest(
-      url: BaseUrl + profileDetails,
+      url: baseUrl + profileDetails,
       body: {
         'user_id': userId,
       },
@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (!mounted) return;
         Navigator.of(context).pop();
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const CheckPinScreen()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       } else {
         var data = res['response'];
@@ -111,7 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       {
         "title": "Change Language",
         "icon": Icons.language,
-        "onTap": () {_showLanguageDialog(context);},
+        "onTap": () {
+          _showLanguageDialog(context);
+        },
       },
       {
         "title": "App Theme",
@@ -398,20 +400,21 @@ void _showLanguageDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(AppLocalizations.of(context)?.translate("change_language") ?? "Change Language"),
+      title: Text(AppLocalizations.of(context)?.translate("change_language") ??
+          "Change Language"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: languages
             .map((lang) => ListTile(
-          title: Text(lang['name']!),
-          onTap: () {
-            // Close the dialog
-            Navigator.of(context).pop();
+                  title: Text(lang['name']!),
+                  onTap: () {
+                    // Close the dialog
+                    Navigator.of(context).pop();
 
-            // Update the locale using MyApp's setLocale method
-            MyApp.of(context)?.setLocale(Locale(lang['code']!));
-          },
-        ))
+                    // Update the locale using MyApp's setLocale method
+                    MyApp.of(context)?.setLocale(Locale(lang['code']!));
+                  },
+                ))
             .toList(),
       ),
     ),
@@ -526,7 +529,9 @@ void _showLogoutDialog(BuildContext context) {
               if (!context.mounted) return;
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                return const CheckPinScreen();
+                return const CheckPinScreen(
+                  biometric: false,
+                );
               }), (r) {
                 return false;
               });

@@ -66,7 +66,7 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
         var branchId = await SessionHelper.getSessionData(SessionKeys.branchId);
 
         final response = await ApiHelper.postRequest(
-          url: BaseUrl + savePtpList,
+          url: baseUrl + savePtpList,
           body: {
             'ptp_date': _dateController.text.toString(),
             'ptp_time': _timeController.text.toString(),
@@ -128,7 +128,7 @@ class _AddPtpScreenState extends State<AddPtpScreen> {
 
     try {
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getPTPListByLan,
+        url: baseUrl + getPTPListByLan,
         body: {
           'lan': widget.lan,
         },

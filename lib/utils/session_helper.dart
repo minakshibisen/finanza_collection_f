@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:finanza_collection_f/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,7 +11,7 @@ class SessionHelper {
 
   static Future<String?> getSessionData(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);  // Returns null if not found
+    return prefs.getString(key); // Returns null if not found
   }
 
   static Future<void> removeSessionData(String key) async {
@@ -19,14 +21,13 @@ class SessionHelper {
 
   static Future<void> clearAllSessionData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();  // Clears all data
+    await prefs.clear(); // Clears all data
   }
 
   static Future<bool> isSessionActive(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey(key);  // Returns true if key exists
+    return prefs.containsKey(key); // Returns true if key exists
   }
-
 
   static Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,7 +39,6 @@ class SessionHelper {
     return prefs.getString(SessionKeys.branchId);
   }
 
-
   static Future<String?> getPin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(SessionKeys.mPin);
@@ -47,5 +47,15 @@ class SessionHelper {
   static Future<void> setPin(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(SessionKeys.mPin, value.toString());
+  }
+
+  static Future<void> setBioEnabled(bool bool) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(SessionKeys.bioEnabled, bool);
+  }
+
+  static Future<bool> getBioEnabled() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(SessionKeys.bioEnabled) ?? true;
   }
 }

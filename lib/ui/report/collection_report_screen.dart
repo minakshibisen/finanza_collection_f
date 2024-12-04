@@ -53,7 +53,7 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
   void getStatusType() async {
     try {
       final response = await ApiHelper.getRequest(
-        url: BaseUrl + getCollectionStatus,
+        url: baseUrl + getCollectionStatus,
       );
 
       if (!mounted) return;
@@ -114,7 +114,7 @@ class _CollectionReportScreenState extends State<CollectionReportScreen> {
     var userId = await SessionHelper.getUserId();
     try {
       final response = await ApiHelper.postRequest(
-        url: BaseUrl + getCollectionStatusReport,
+        url: baseUrl + getCollectionStatusReport,
         body: {
           "start_date": fromdateController.text.toString(),
           "end_date": todateController.text.toString(),
