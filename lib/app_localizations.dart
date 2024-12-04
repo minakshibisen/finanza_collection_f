@@ -18,8 +18,8 @@ class AppLocalizations {
   String translate(String key) => _localizedStrings[key] ?? key;
 
   static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
-  }
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);}
+
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
