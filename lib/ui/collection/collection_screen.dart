@@ -234,6 +234,29 @@ class CollectionItemCard extends StatefulWidget {
 
 class _CollectionItemCardState extends State<CollectionItemCard> {
   var isOpen = false;
+  List<MenuItem> menuItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    menuItems.add(MenuItem(
+      icon: Icons.link,
+      title: 'Link',
+      context: context,
+      onTap: () {
+        showSnackBar("Payment Link Sent!", context);
+      },
+    ));
+
+    menuItems.add(MenuItem(
+      icon: Icons.feedback_outlined,
+      title: 'Feedback',
+      context: context,
+      onTap: () {
+        showSnackBar("Payment Link Sent!", context);
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -448,9 +471,44 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                     width: .5,
                     padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
-                  _buildActionButton(Icons.link, 'Link', Colors.green, () {
-                    showSnackBar("Payment Link Sent", context);
-                  }),
+                  PopupMenuButton<MenuItem>(
+                    onSelected: (MenuItem item) {
+                      item.onTap();
+                    },
+                    color: AppColors.textOnPrimary,
+                    elevation: 2,
+                    position: PopupMenuPosition.under,
+                    itemBuilder: (BuildContext context) =>
+                        menuItems.map((MenuItem item) {
+                      return PopupMenuItem<MenuItem>(
+                        value: item,
+                        child: Row(
+                          children: [
+                            Icon(item.icon, size: 15),
+                            const SizedBox(width: 4),
+                            Text(
+                              item.title,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.more_vert, size: 15),
+                        SizedBox(width: 4),
+                        Text(
+                          'More',
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -527,4 +585,17 @@ class RoundedSearchInput extends StatelessWidget {
       ),
     );
   }
+}
+
+class MenuItem {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+  final BuildContext context;
+
+  MenuItem(
+      {required this.icon,
+      required this.title,
+      required this.onTap,
+      required this.context});
 }
