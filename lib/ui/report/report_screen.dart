@@ -1,3 +1,4 @@
+import 'package:finanza_collection_f/ui/report/attendance_report_screen.dart';
 import 'package:finanza_collection_f/ui/report/collection_report_screen.dart';
 import 'package:finanza_collection_f/ui/report/due_report_screen.dart';
 import 'package:flutter/material.dart';
@@ -18,46 +19,45 @@ class _ReportScreenState extends State<ReportScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DefaultAppBar(title: "Reports", size: size),
-    body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      child: GridView(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 1,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          childAspectRatio: 3.5,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        child: GridView(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childAspectRatio: 3.5,
+          ),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            _buildActionButton(Icons.collections, 'Collection Report',
+                'Check your collection report', () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const CollectionReportScreen()),
+              );
+            }),
+            _buildActionButton(
+                Icons.report, 'Due Report', 'Check your due report', () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const DueReportScreen()),
+              );
+            }),
+            _buildActionButton(Icons.repeat_one_on_sharp, 'Attendance Report',
+                'Check your attendance report', () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const AttendanceReportScreen()),
+              );
+            }),
+          ],
         ),
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          _buildActionButton(
-              Icons.collections, 'Collection Report', 'Check your collection report',
-                  () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const CollectionReportScreen()),
-                );
-              }),
-          _buildActionButton(
-              Icons.report, 'Due Report', 'Check your due report',
-                  () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const DueReportScreen()),
-                );
-              }),
-          _buildActionButton(
-              Icons.repeat_one_on_sharp, 'Attendance Report', 'Check your attendance report',
-                  () {
-              /*  Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const CollectionScreen()),
-                );*/
-              }),
-        ],
       ),
-    ),
-
     );
-
   }
+
   Widget _buildActionButton(
       IconData icon, String label, String subTitle, VoidCallback onTap,
       {Color color = AppColors.primaryColor}) {

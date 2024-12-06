@@ -507,7 +507,7 @@ class _DashboardCardState extends State<DashboardCard> {
       var deviceId = await getId();
 
       final response =
-          await ApiHelper.postRequest(url: baseUrl + infoAttendence, body: {
+          await ApiHelper.postRequest(url: baseUrl + saveUserAttendance, body: {
         "user_id": userId.toString(),
         'longitude': address['longitude'].toString(),
         'latitude': address['latitude'].toString(),

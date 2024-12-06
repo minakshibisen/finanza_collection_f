@@ -443,6 +443,14 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
                               )),
                     );
                   }),
+                  Container(
+                    color: AppColors.textColor,
+                    width: .5,
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                  ),
+                  _buildActionButton(Icons.link, 'Link', Colors.green, () {
+                    showSnackBar("Payment Link Sent", context);
+                  }),
                 ],
               ),
             ),

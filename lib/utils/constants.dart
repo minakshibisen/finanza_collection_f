@@ -20,7 +20,8 @@ const collectionSubmit = "collectionSubmit";
 
 const getDashboardData = "getDashboardData";
 const listCoApplicant = "listCoApplicant";
-const infoAttendence = "infoAttendence";
+const saveUserAttendance = "saveUserAttendance";
+const getUserAttendance = "getUserAttendance";
 
 class SessionKeys {
   static const String userId = "KEY_USER_ID";

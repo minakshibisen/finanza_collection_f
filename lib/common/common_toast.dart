@@ -9,8 +9,8 @@ class CommonToast {
     required String description,
     Color textColor = AppColors.textOnPrimary,
     ToastType toastType = ToastType.custom,
-    Duration animDuration = const Duration(seconds: 3),
-    Duration duration = const Duration(seconds: 3),
+    Duration animDuration = const Duration(seconds: 2),
+    Duration duration = const Duration(seconds: 2),
   }) {
     var titleStyle = TextStyle(fontWeight: FontWeight.bold, color: textColor);
     var descStyle = TextStyle(color: textColor);
@@ -54,6 +54,7 @@ class CommonToast {
           contentPadding: const EdgeInsets.symmetric(horizontal: 10),
           secondaryColor: AppColors.textOnPrimary,
           icon: Icons.info,
+          dismissable: true,
           title: Text(title, style: titleStyle),
           description: Text(description, style: descStyle),
           animationDuration: animDuration,
