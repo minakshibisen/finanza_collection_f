@@ -212,8 +212,8 @@ class CalendarWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: isPresent ? Colors.green[50] : null,
             border: isToday
-                ? Border.all(color: Colors.red, width: .4)
-                : Border.all(color: Colors.grey[300]!, width: .2),
+                ? Border.all(color: AppColors.red, width: .4)
+                : Border.all(color: AppColors.lightGrey, width: .2),
           ),
           child: Column(
             children: [
@@ -227,7 +227,7 @@ class CalendarWidget extends StatelessWidget {
                       fontSize: 14,
                       fontWeight:
                           isPresent ? FontWeight.bold : FontWeight.normal,
-                      color: isPresent ? Colors.green[700] : Colors.black,
+                      color: AppColors.titleColor,
                     ),
                   ),
                 ),
@@ -240,9 +240,9 @@ class CalendarWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(2.0),
                       child: Text(
                         timeText,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 9,
-                          color: Colors.green[700],
+                          color: AppColors.titleColor,
                         ),
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
