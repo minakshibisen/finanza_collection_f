@@ -16,5 +16,6 @@ class AppColors {
   static const Color textOnPrimary = Color(0xffffffff);
   static const Color iconColor = Color(0x9e1f1f1f);
   static const Color red = Color(0xd2f81717);
+  static const Color green = Color(0xd200ff2c);
 
 }

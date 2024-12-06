@@ -1,3 +1,4 @@
+import 'package:finanza_collection_f/ui/report/attendance_report_layout.dart';
 import 'package:finanza_collection_f/ui/report/attendance_report_screen.dart';
 import 'package:finanza_collection_f/ui/report/collection_report_screen.dart';
 import 'package:finanza_collection_f/ui/report/due_report_screen.dart';
@@ -49,7 +50,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 'Check your attendance report', () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => const AttendanceReportScreen()),
+                    builder: (context) => const AttendanceReportLayout()),
               );
             }),
           ],

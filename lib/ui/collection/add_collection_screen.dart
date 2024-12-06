@@ -402,9 +402,9 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const UserBanner(
-                  name: 'CHANDA PRAKASH RAV',
-                  lan: '101101100001',
+                UserBanner(
+                  name: widget.name,
+                  lan: widget.lan,
                 ),
                 TitledDropdown(
                     items: receiptModeList != {}

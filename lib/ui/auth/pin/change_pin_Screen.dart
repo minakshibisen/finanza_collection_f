@@ -2,9 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../home/home_screen.dart';
 
 
 class ChangePinScreen extends StatefulWidget {
@@ -197,11 +195,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
       } else {
         await SessionHelper.setPin(pin);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Pin Saved!")));
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const HomeScreen()),
-        );
+        Navigator.pop(context );
       }
     }
   }
