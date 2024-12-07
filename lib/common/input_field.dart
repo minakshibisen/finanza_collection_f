@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../utils/colors.dart';
 
-class InputFieldWidget extends StatelessWidget {
+class InputFieldWidget extends StatefulWidget {
   final String hintText;
   final IconData icon;
   final bool capitalize;
@@ -14,25 +14,42 @@ class InputFieldWidget extends StatelessWidget {
   final bool hasIcon;
   final int? length;
   final bool enabled;
-  ValueChanged<String>? onChanged;
+  final bool isPassword;
+  final ValueChanged<String>? onChanged;
 
-  InputFieldWidget(
-      {required this.hintText,
-      this.icon = Icons.receipt,
-      super.key,
-      this.textInputAction = TextInputAction.done,
-      this.lines = 1,
-      this.length,
-      this.keyboardType = TextInputType.text,
-      this.capitalize = false,
-      this.hasIcon = true,
-      this.enabled = false,
-      this.onChanged, required this.controller});
+  const InputFieldWidget({
+    required this.hintText,
+    this.icon = Icons.receipt,
+    super.key,
+    this.textInputAction = TextInputAction.done,
+    this.lines = 1,
+    this.length,
+    this.keyboardType = TextInputType.text,
+    this.capitalize = false,
+    this.hasIcon = true,
+    this.enabled = false,
+    this.onChanged,
+    required this.controller,
+    this.isPassword = false,
+  });
+
+  @override
+  State<InputFieldWidget> createState() => _InputFieldWidgetState();
+}
+
+class _InputFieldWidgetState extends State<InputFieldWidget> {
+  bool passwordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+
+    passwordVisible = widget.isPassword;
+  }
 
   @override
   Widget build(BuildContext context) {
     TextCapitalization textCapitalization;
-    if (capitalize) {
+    if (widget.capitalize) {
       textCapitalization = TextCapitalization.words;
     } else {
       textCapitalization = TextCapitalization.none;
@@ -46,35 +63,47 @@ class InputFieldWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          if (hasIcon)
+          if (widget.hasIcon)
             Icon(
-              icon,
+              widget.icon,
               size: 18,
               color: AppColors.primaryColor,
             ),
           const SizedBox(width: 10.0),
           Expanded(
             child: TextField(
-              textInputAction: textInputAction,
+              obscureText: passwordVisible,
+              textInputAction: widget.textInputAction,
               textCapitalization: textCapitalization,
-              keyboardType: keyboardType,
-              maxLines: lines,
+              keyboardType: widget.keyboardType,
+              maxLines: widget.lines,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              readOnly: enabled,
-              maxLength: length,
-              controller: controller,
-              canRequestFocus: !enabled,
-              showCursor: !enabled,
-              onChanged: onChanged,
+              readOnly: widget.enabled,
+              maxLength: widget.length,
+              controller: widget.controller,
+              canRequestFocus: !widget.enabled,
+              showCursor: !widget.enabled,
+              onChanged: widget.onChanged,
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: hintText,
+                hintText: widget.hintText,
                 counterText: "",
                 hintStyle: TextStyle(fontSize: 12, color: Colors.grey[500]),
               ),
             ),
           ),
+          if (widget.isPassword)
+            IconButton(
+              padding: EdgeInsets.zero,
+              style: const ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
+              onPressed: () {
+                setState(() {
+                  passwordVisible = !passwordVisible;
+                });
+              },
+              icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off),
+            )
         ],
       ),
     );

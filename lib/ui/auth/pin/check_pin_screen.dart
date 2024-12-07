@@ -3,7 +3,6 @@ import 'package:finanza_collection_f/utils/biometric_helper.dart';
 import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-
 import '../../home/home_screen.dart';
 import '../login_screen.dart';
 
@@ -27,6 +26,7 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isVisible = true;
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.4;
     final defaultPinTheme = PinTheme(
@@ -157,11 +157,25 @@ class _CheckPinScreenState extends State<CheckPinScreen> {
                 focusedPinTheme: focusedPinTheme,
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                 showCursor: true,
+                obscureText: isVisible,
                 closeKeyboardWhenCompleted: false,
                 onCompleted: (value) {
                   pin = value;
                   checkPin();
                 },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isVisible = !isVisible;
+                  });
+                },
+                child: Text(isVisible ? 'View Pin' : 'Hide Pin',
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    textAlign: TextAlign.center),
               ),
               const SizedBox(
                 height: 10,

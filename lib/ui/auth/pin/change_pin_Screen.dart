@@ -3,8 +3,6 @@ import 'package:finanza_collection_f/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-
-
 class ChangePinScreen extends StatefulWidget {
   const ChangePinScreen({super.key});
 
@@ -12,12 +10,14 @@ class ChangePinScreen extends StatefulWidget {
   State<ChangePinScreen> createState() => _ChangePinScreenState();
 }
 
-String pin = '';
-bool existing = true;
-TextEditingController pinController = TextEditingController();
-
 class _ChangePinScreenState extends State<ChangePinScreen> {
+
+  String pin = '';
+  bool existing = true;
+  TextEditingController pinController = TextEditingController();
+  bool passwordVisible = false;
   String text = 'Verify 4-digit security pin';
+  bool isVisible = true;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -153,10 +153,24 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                 showCursor: true,
                 closeKeyboardWhenCompleted: false,
+                obscureText: isVisible,
                 onCompleted: (value) {
                   pin = value;
                   savePin();
                 },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isVisible = !isVisible;
+                  });
+                },
+                child: Text(isVisible ? 'View Pin' : 'Hide Pin',
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    textAlign: TextAlign.center),
               ),
               const SizedBox(
                 height: 30,
@@ -167,6 +181,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               const Text('Forgot Pin?',
                   style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                   textAlign: TextAlign.center),
+
             ],
           ),
         ),
@@ -195,7 +210,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
       } else {
         await SessionHelper.setPin(pin);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Pin Saved!")));
-        Navigator.pop(context );
+        Navigator.pop(context);
       }
     }
   }

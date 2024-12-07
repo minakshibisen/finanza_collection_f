@@ -19,6 +19,7 @@ class _SetPinScreenState extends State<SetPinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isVisible = true;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.37;
@@ -150,10 +151,24 @@ class _SetPinScreenState extends State<SetPinScreen> {
                 focusedPinTheme: focusedPinTheme,
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                 showCursor: true,
+                obscureText: isVisible,
                 closeKeyboardWhenCompleted: false,
                 onCompleted: (value) {
                   pin = value;
                 },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isVisible = !isVisible;
+                  });
+                },
+                child: Text(isVisible ? 'View Pin' : 'Hide Pin',
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    textAlign: TextAlign.center),
               ),
               const SizedBox(
                 height: 30,

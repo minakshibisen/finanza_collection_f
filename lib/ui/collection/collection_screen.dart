@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:finanza_collection_f/common/default_app_bar.dart';
+import 'package:finanza_collection_f/ui/auth/feedback_screen.dart';
 import 'package:finanza_collection_f/ui/collection/add_collection_screen.dart';
 import 'package:finanza_collection_f/ui/maps/map_screen.dart';
 import 'package:finanza_collection_f/ui/ptp/add_ptp_screen.dart';
@@ -253,7 +254,10 @@ class _CollectionItemCardState extends State<CollectionItemCard> {
       title: 'Feedback',
       context: context,
       onTap: () {
-        showSnackBar("Payment Link Sent!", context);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) =>  FeedbackScreen( lan: widget.lan,)),
+        );
       },
     ));
   }

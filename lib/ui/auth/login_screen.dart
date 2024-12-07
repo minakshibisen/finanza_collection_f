@@ -111,6 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool isConfirmPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -225,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: 'Password',
                               icon: Icons.password,
                               controller: passwordController,
-                              keyboardType: TextInputType.visiblePassword,
+                              isPassword: true,
                             ),
                           ],
                         )),

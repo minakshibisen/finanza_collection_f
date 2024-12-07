@@ -4,6 +4,7 @@ import 'package:pinput/pinput.dart';
 import '../../../common/primary_button.dart';
 import '../../../utils/colors.dart';
 import 'change_pin_Screen.dart';
+import 'check_pin_screen.dart';
 
 class PinScreen extends StatefulWidget {
   const PinScreen({super.key});
@@ -87,9 +88,6 @@ class _PinScreenState extends State<PinScreen> {
                   pin = value;
                 },
               ),
-
-
-
               const SizedBox(
                 height: 30,
               ),
@@ -111,5 +109,4 @@ class _PinScreenState extends State<PinScreen> {
 
 }
 
-class _customKeyboard {
-}
+

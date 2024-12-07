@@ -22,6 +22,9 @@ const getDashboardData = "getDashboardData";
 const listCoApplicant = "listCoApplicant";
 const saveUserAttendance = "saveUserAttendance";
 const getUserAttendance = "getUserAttendance";
+const getUserAttendanceList = "getUserAttendanceList";
+const getFeedbackTypeList = "getFeedbackTypeList";
+const addClientFeedback = "addClientFeedback";
 
 class SessionKeys {
   static const String userId = "KEY_USER_ID";
